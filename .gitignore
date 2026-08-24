@@ -1,0 +1,32 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# ===== 环境与密钥（严禁提交真实 .env） =====
+.env
+.env.*
+!.env.example
+
+# ===== 缓存 / 日志 =====
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+
+# ===== 系统 / IDE 垃圾 =====
+.DS_Store
+.AppleDouble
+Thumbs.db
+.idea/
+.vscode/
+
+# ===== 项目内部（不入库） =====
+.workbuddy/

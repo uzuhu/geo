@@ -1,0 +1,26 @@
+# ===== GEO 收录查询系统 - 依赖清单 (阶段一/二) =====
+# 后端核心
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.7
+pydantic-settings>=2.2
+httpx>=0.27
+
+# 自动化引擎
+playwright>=1.44
+playwright-stealth>=1.0.4
+
+# 任务调度与队列 (阶段一技术栈，阶段四启用)
+celery>=5.4
+redis>=5.0
+
+# 存储引擎 (阶段四启用)
+sqlmodel>=0.0.16
+psycopg[binary]>=3.1
+elasticsearch>=8.13
+
+# 官方 SDK
+openai>=1.30
+
+# 工具
+python-dotenv>=1.0

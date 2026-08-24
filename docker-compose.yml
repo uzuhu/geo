@@ -1,0 +1,92 @@
+# =====================================================================
+# GEO 收录查询系统 - 多服务编排
+# 一键拉起：docker compose up --build -d
+# 前置：先 `cp .env.example .env` 并填入各模型 API Key
+# =====================================================================
+services:
+  # ---------- PostgreSQL ----------
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: geo
+      POSTGRES_PASSWORD: geo
+      POSTGRES_DB: geo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U geo -d geo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "5432:5432"   # 宿主机调试用，纯容器内部通信时可在生产环境移除
+
+  # ---------- Redis（Celery broker / backend） ----------
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    ports:
+      - "6379:6379"   # 宿主机调试用
+
+  # ---------- Web (FastAPI) ----------
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # API Key / 业务参数来自 .env；连接串在容器内覆盖为服务名（见 environment）
+    env_file:
+      - .env
+    environment:
+      # 容器内网络地址（覆盖 .env 中的 localhost）
+      POSTGRES_DSN: postgresql+psycopg://geo:geo@db:5432/geo
+      REDIS_URL: redis://redis:6379/0
+      ELASTICSEARCH_HOSTS: "[\"http://localhost:9200\"]"
+    volumes:
+      - .:/app          # 挂载本地源码，热更新
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ---------- Worker (Celery) ----------
+  worker:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DSN: postgresql+psycopg://geo:geo@db:5432/geo
+      REDIS_URL: redis://redis:6379/0
+      ELASTICSEARCH_HOSTS: "[\"http://localhost:9200\"]"
+    volumes:
+      - .:/app
+    # 启动前先保底建表（create_all 幂等），再启动 worker，并发限制 2 防止内存打满
+    command: >
+      sh -c "python -c 'from app.db.engine import init_db; init_db()'
+             && celery -A app.celery_app.celery_app worker --loglevel=info -c 2"
+
+volumes:
+  pgdata:
