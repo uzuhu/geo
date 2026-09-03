@@ -22,13 +22,24 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 <CardGrid>
   <Card title="GEO 入门" icon="open-book">
-    理解生成式引擎如何检索、理解并引用你的内容。
+    理解生成式引擎如何检索、理解并引用你的内容，以及 GEO 的由来与三大支柱。
+    [阅读入门指南 →](/geo/guides/what-is-geo/)
   </Card>
-  <Card title="结构化数据" icon="seti:json">
-    通过 JSON-LD 向 AI 明确内容类型、作者、时间线与问答关系。
+  <Card title="优化策略" icon="seti:json">
+    基于普林斯顿 GEO-bench 的 9 项被验证内容战术，以及可立即落地的写作清单。
+    [查看 9 项策略 →](/geo/guides/geo-strategies/)
   </Card>
-  <Card title="语义化写作" icon="seti:markdown">
-    用清晰的 H1–H3 层级与要点卡片，提升内容的可解析性。
+  <Card title="GEO vs SEO" icon="seti:markdown">
+    一张对比表讲清二者差异，并解释为什么「SEO 是 GEO 的基础」。
+    [对比阅读 →](/geo/guides/geo-vs-seo/)
+  </Card>
+  <Card title="效果度量" icon="approve-check">
+    没有统一 GSC 也能度量：三层度量栈、核心 KPI 与 Prompt Panel 实操。
+    [如何度量 →](/geo/guides/measure-geo/)
+  </Card>
+  <Card title="AI 爬虫配置" icon="puzzle">
+    放行 GPTBot、ClaudeBot、PerplexityBot 等，让内容先被抓到，才谈得上被引用。
+    [配置 robots.txt →](/geo/guides/ai-crawlers/)
   </Card>
 </CardGrid>
 
@@ -39,6 +50,10 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 - `robots.txt` 已放行 Googlebot、Bingbot、GPTBot、ClaudeBot、PerplexityBot、Google-Extended 等主流爬虫。
 - 编译时自动生成 `sitemap-index.xml`，并通过 `base: '/geo'` 部署到 GitHub Pages 子路径。
 
-## 从这里开始
+## 建议阅读顺序
 
-👉 阅读 [GEO 优化入门指南](/geo/guides/what-is-geo/) 了解核心概念与落地策略。
+1. [GEO 优化入门指南](/geo/guides/what-is-geo/)
+2. [GEO 优化策略：9 项被验证的内容战术](/geo/guides/geo-strategies/)
+3. [GEO 与 SEO：核心差异与互补关系](/geo/guides/geo-vs-seo/)
+4. [如何度量 GEO 效果](/geo/guides/measure-geo/)
+5. [AI 爬虫与 robots.txt 配置](/geo/guides/ai-crawlers/)
