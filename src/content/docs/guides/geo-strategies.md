@@ -20,8 +20,6 @@ sidebar:
   order: 2
 ---
 
-import { Card, CardGrid, Aside, Steps } from '@astrojs/starlight/components';
-
 ## 来自普林斯顿论文的 9 项内容策略
 
 普林斯顿团队在 GEO-bench 上系统测试了 9 种内容修改策略，用「位置加权词数（Position-Adjusted Word Count）」衡量可见度，未优化基线为 **19.3**。下表是论文中最常被引用、却很少被完整打印的结果：
@@ -38,9 +36,7 @@ import { Card, CardGrid, Aside, Steps } from '@astrojs/starlight/components';
 | 独特词汇（Unique Words） | 20.5 | +6% |
 | 关键词堆砌（Keyword Stuffing） | 17.7 | **−8%** |
 
-<Aside type="tip" title="一个反直觉的结论">
-最「老派」的 SEO 本能——关键词堆砌——在生成式引擎里反而最糟糕。生成式引擎不数词频，它评估语义丰富度与可信度。如果某家服务商的 GEO 方案只是「把关键词多放几处」，那它的实测效果是**负向**的。
-</Aside>
+> **💡 一个反直觉的结论**：最「老派」的 SEO 本能——关键词堆砌——在生成式引擎里反而最糟糕。生成式引擎不数词频，它评估语义丰富度与可信度。如果某家服务商的 GEO 方案只是「把关键词多放几处」，那它的实测效果是**负向**的。
 
 ### 这些策略意味着什么
 
@@ -53,41 +49,22 @@ import { Card, CardGrid, Aside, Steps } from '@astrojs/starlight/components';
 
 把论文结论翻译成日常写作，最有效的做法是这几条：
 
-<Steps>
-
 1. **结论先行（BLUF）**：每节开头先用一句话给出核心结论，再展开依据。生成式引擎倾向于抓取开篇的明确陈述。
-
 2. **给出可验证的具体数据**：把「市场份额显著增长」改成「市场份额增长 37%（2025 年 X 报告）」。具体数字更易被验证、组合与引用。
-
 3. **用真实问答覆盖用户问题**：直接回答用户会问的问题，而不是自说自话。FAQ 段落尤其容易被 AI 直接抽取为答案。
-
 4. **结构化呈现**：用清晰的 H1–H3、要点列表、表格组织内容。结构化良好的内容更不易被模型误读。
-
 5. **部署结构化数据（Schema）**：用 `TechArticle`、`FAQPage`、`BreadcrumbList` 等 JSON-LD 给内容打上机器可读的「类型标签」。
-
 6. **强化权威信号（E-E-A-T）**：署名专家、机构背书、引用权威研究与一手数据；让 AI 有理由信任你。
-
 7. **保持内容新鲜**：定期更新数字、链接与案例。Seer Interactive 研究发现，近 90% 的 AI 爬虫活动集中在近三年发布/更新的内容上。
-
 8. **放行 AI 爬虫**：在 `robots.txt` 中允许 GPTBot、ClaudeBot、PerplexityBot、Google-Extended 等（详见 [AI 爬虫与 robots.txt](/geo/guides/ai-crawlers/)）。
-
-</Steps>
 
 ## 不同 AI 平台的侧重点
 
 虽然底层原则一致，但各生成式引擎的运作逻辑略有差异，可针对性微调：
 
-<CardGrid>
-  <Card title="Perplexity" icon="approve-check">
-    定位为「答案引擎」，回答严谨且附来源链接。**权威性与数据更新速度是关键**——包含最新统计与明确出处的内容更容易被选用。
-  </Card>
-  <Card title="ChatGPT" icon="comment">
-    搜索功能将对话与即时信息结合。**预测用户的连续提问**，内容需具备深度与逻辑，覆盖延伸议题，才能在多轮对话中持续曝光。
-  </Card>
-  <Card title="Gemini" icon="puzzle">
-    整合 Google 生态与多模态（文字+图片+视频）。**为图片加 Alt 标签、为视频加脚本/字幕**，确保多媒体内容也能被索引与引用。
-  </Card>
-</CardGrid>
+- **Perplexity**：定位为「答案引擎」，回答严谨且附来源链接。**权威性与数据更新速度是关键**——包含最新统计与明确出处的内容更容易被选用。
+- **ChatGPT**：搜索功能将对话与即时信息结合。**预测用户的连续提问**，内容需具备深度与逻辑，覆盖延伸议题，才能在多轮对话中持续曝光。
+- **Gemini**：整合 Google 生态与多模态（文字+图片+视频）。**为图片加 Alt 标签、为视频加脚本/字幕**，确保多媒体内容也能被索引与引用。
 
 ## 小结
 

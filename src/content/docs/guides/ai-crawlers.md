@@ -15,12 +15,10 @@ faq:
   - question: "Google-Extended 和 Googlebot 有什么区别？"
     answer: "Googlebot 服务于传统搜索与 AI Overviews；Google-Extended 是 Google 用于训练与生成式 AI 产品的抓取令牌（token），专门覆盖 Gemini 等生成式场景。两者建议都放行。"
   - question: "怎么验证 AI 爬虫能访问我的页面？"
-    answer: "先用各大平台官方提供的验证方式（如 Google 的 robots.txt 测试工具）确认未被屏蔽；再用 curl 模拟对应 UA 抓取关键页面，确认返回 200 且能读到正文。"
+    answer: "先用各大平台官方提供的验证方式（如 Google 的 robots.txt 测试工具）确认未被屏蔽；再用 curl 模拟对应 UA 抓取关键页面，确认返回 200 且正文可读。"
 sidebar:
   order: 5
 ---
-
-import { Aside, Steps } from '@astrojs/starlight/components';
 
 ## 为什么放行 AI 爬虫是 GEO 的地基
 
@@ -41,9 +39,7 @@ GEO 的「生成阶段」依赖「检索阶段」：生成式引擎先用爬虫�
 | `Applebot` / `Applebot-Extended` | Apple | Apple 智能（Apple Intelligence） |
 | `CCBot` | Common Crawl | 许多模型训练数据来源 |
 
-<Aside type="note" title="建议全部放行">
-上述爬虫代表了当前主流的生成式检索与训练来源。对以「被引用」为目标的 GEO 站点，全部放行通常不会带来负面效果，反而扩大被纳入答案来源集的机会。
-</Aside>
+> **📝 建议全部放行**：上述爬虫代表了当前主流的生成式检索与训练来源。对以「被引用」为目标的 GEO 站点，全部放行通常不会带来负面效果，反而扩大被纳入答案来源集的机会。
 
 ## 对 AI 友好的 robots.txt 范例
 
@@ -92,14 +88,10 @@ Sitemap: https://uzuhu.github.io/geo/sitemap-index.xml
 
 ## 验证爬虫可访问性
 
-<Steps>
-
 1. **用官方工具确认未被屏蔽**：例如 Google 的 robots.txt 测试工具，输入页面 URL 与 UA，确认返回「允许」。
 2. **用 curl 模拟对应 UA 抓取**：例如 `curl -A "GPTBot" https://uzuhu.github.io/geo/guides/what-is-geo/`，确认返回 HTTP 200 且正文可读。
 3. **确认 Sitemap 可达**：浏览器或 curl 打开 `https://uzuhu.github.io/geo/sitemap-index.xml`，确认能正常返回 XML。
 4. **定期复检**：部署流程或 CDN 规则变更后，重新跑一遍上述检查，避免无意中屏蔽了 AI 爬虫。
-
-</Steps>
 
 ## 小结
 

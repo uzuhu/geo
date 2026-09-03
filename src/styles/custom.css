@@ -290,16 +290,43 @@
   border-bottom: 1px solid var(--sl-color-hairline);
 }
 
-/* 侧边栏当前页高亮 */
-.sidebar a[aria-current="page"] {
-  color: var(--sl-color-text-accent);
-  font-weight: 600;
-}
-
 /* 右侧目录当前项 */
 .toc a[aria-current="true"],
 .toc a:hover {
   color: var(--sl-color-text-accent);
+}
+
+/* ---------- 10. 上一页 / 下一页（分页）字号收敛 ---------- */
+.pagination-links {
+  gap: 1rem;
+}
+
+.pagination-links a {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  background: var(--sl-color-bg);
+  box-shadow: var(--sl-shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.pagination-links a:hover {
+  transform: translateY(-2px);
+  border-color: var(--geo-accent);
+  box-shadow: var(--sl-shadow-md);
+}
+
+.pagination-links a > span {
+  font-size: var(--sl-text-sm);
+  color: var(--sl-color-gray-3);
+  line-height: 1.3;
+}
+
+.pagination-links .link-title {
+  font-size: var(--sl-text-base);
+  font-weight: 600;
+  color: var(--sl-color-white);
+  line-height: 1.35;
 }
 
 /* ---------- 10. 链接 / 选区 / 滚动条 ---------- */

@@ -20,8 +20,6 @@ sidebar:
   order: 3
 ---
 
-import { Aside } from '@astrojs/starlight/components';
-
 ## 一句话区分
 
 - **SEO（Search Engine Optimization，搜索引擎优化）**：让你的内容在传统搜索结果（Google、Bing）里**排名更高、获得点击**。
@@ -59,9 +57,7 @@ import { Aside } from '@astrojs/starlight/components';
 1. **检索阶段（Retrieval）**：先用传统搜索技术从海量网页中召回候选内容。**这一步仍然依赖 SEO**——如果你的内容在传统搜索里完全不可见，AI 引擎很难找到它。
 2. **生成阶段（Generation）**：大模型阅读、理解、综合这些候选内容，生成连贯答案。模型会根据内容的质量、权威性、数据支撑程度决定是否引用。
 
-<Aside type="note" title="关键洞察">
-AI 搜索引擎的「检索」阶段需要 SEO 基础，而「生成」阶段才需要 GEO 策略。一个成熟的内容方要同时做好两件事：**让内容被找到（SEO），让内容被引用（GEO）**。
-</Aside>
+> **💡 关键洞察**：AI 搜索引擎的「检索」阶段需要 SEO 基础，而「生成」阶段才需要 GEO 策略。一个成熟的内容方要同时做好两件事：**让内容被找到（SEO），让内容被引用（GEO）**。
 
 这也得到数据支持：研究显示，在 AI Overviews 中被引用的网站，约 **50%** 同时也位于传统搜索结果的前 10 名。好的 SEO 依然有效，只是需要叠加一层「AI 可读性」。
 
