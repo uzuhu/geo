@@ -1,0 +1,52 @@
+/* ============================================================
+   GEO 知识库自定义样式
+   - Key Takeaways（核心要点）高亮卡片
+   - 语义化排版微调
+   ============================================================ */
+
+:root {
+  --geo-takeaway-bg: #eef6ff;
+  --geo-takeaway-border: #2f7df6;
+  --geo-takeaway-title: #0b4fa0;
+}
+
+/* Key Takeaways 高亮卡片 */
+.geo-takeaways {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: var(--geo-takeaway-bg);
+  border-left: 4px solid var(--geo-takeaway-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.geo-takeaways__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--geo-takeaway-title);
+  letter-spacing: 0.01em;
+}
+
+.geo-takeaways__title::before {
+  content: "★";
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.geo-takeaways ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.geo-takeaways li {
+  margin: 0.35rem 0;
+  line-height: 1.6;
+}
+
+.geo-takeaways li::marker {
+  color: var(--geo-takeaway-border);
+}

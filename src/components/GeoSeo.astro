@@ -1,0 +1,113 @@
+---
+/**
+ * GeoSeo.astro
+ * 自动注入结构化数据（JSON-LD），强化 GEO / SEO 表现。
+ * 支持：
+ *  - TechArticle（技术规范文章）
+ *  - BreadcrumbList（面包屑）
+ *  - FAQPage（来自 frontmatter 的 faq 字段，可选）
+ *
+ * 数据由 src/components/Head.astro 从 Starlight 路由与 frontmatter 中提取后传入。
+ */
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+interface Crumb {
+  name: string;
+  url: string;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  /** 规范绝对 URL */
+  url: string;
+  /** ISO 8601 发布时间 */
+  publishDate?: string;
+  /** ISO 8601 更新时间 */
+  updatedDate?: string;
+  authorName?: string;
+  publisherName?: string;
+  faq?: FaqItem[];
+  breadcrumbs?: Crumb[];
+}
+
+const {
+  title,
+  description,
+  url,
+  publishDate,
+  updatedDate,
+  authorName,
+  publisherName = 'uzuhu',
+  faq,
+  breadcrumbs,
+} = Astro.props;
+
+const origin = (() => {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return 'https://uzuhu.github.io';
+  }
+})();
+
+const author = authorName || publisherName;
+
+// 1) TechArticle
+const techArticle: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: title,
+  url,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+  inLanguage: 'zh-CN',
+  author: { '@type': 'Person', name: author },
+  publisher: {
+    '@type': 'Organization',
+    name: publisherName,
+    url: origin,
+  },
+};
+if (description) techArticle.description = description;
+if (publishDate) techArticle.datePublished = publishDate;
+if (updatedDate) techArticle.dateModified = updatedDate;
+else if (publishDate) techArticle.dateModified = publishDate;
+
+// 2) BreadcrumbList
+let breadcrumbJson: string | undefined;
+if (breadcrumbs && breadcrumbs.length > 0) {
+  breadcrumbJson = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbs.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.name,
+      item: c.url,
+    })),
+  });
+}
+
+// 3) FAQPage（仅当 frontmatter 定义了 faq 时）
+let faqJson: string | undefined;
+if (faq && faq.length > 0) {
+  faqJson = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.answer,
+      },
+    })),
+  });
+}
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(techArticle)} />
+{breadcrumbJson && <script type="application/ld+json" set:html={breadcrumbJson} />}
+{faqJson && <script type="application/ld+json" set:html={faqJson} />}

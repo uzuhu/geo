@@ -28,5 +28,10 @@ Thumbs.db
 .idea/
 .vscode/
 
+# ===== Node / Astro =====
+node_modules/
+.astro/
+*.tsbuildinfo
+
 # ===== 项目内部（不入库） =====
 .workbuddy/

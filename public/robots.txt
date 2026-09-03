@@ -1,0 +1,47 @@
+# ============================================================
+# robots.txt — GEO 知识库
+# 放行主流搜索引擎与 AI 爬虫（GPTBot / ClaudeBot / PerplexityBot 等）
+# 站点部署于 GitHub Pages 子路径：https://uzuhu.github.io/geo/
+# ============================================================
+
+# 默认：全部允许
+User-agent: *
+Allow: /
+
+# 主流搜索引擎
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# AI / 生成式引擎爬虫
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# 站点地图（编译时由 @astrojs/sitemap 自动生成）
+Sitemap: https://uzuhu.github.io/geo/sitemap-index.xml

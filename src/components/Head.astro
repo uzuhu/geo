@@ -1,0 +1,64 @@
+---
+/**
+ * Head.astro（Starlight 组件覆盖）
+ * 保留 Starlight 默认 <head> 行为，并自动注入 GEO / SEO 结构化数据。
+ * 数据来源：Astro.locals.starlightRoute.entry.data（frontmatter）
+ */
+import DefaultHead from '@astrojs/starlight/components/Head.astro';
+import GeoSeo from './GeoSeo.astro';
+
+const route = Astro.locals.starlightRoute;
+const entry = route.entry;
+const data = entry?.data;
+
+// 仅对拥有 frontmatter 的文档页注入结构化数据
+const canInject = !!entry && !!data?.title;
+
+// 规范绝对 URL（Astro 已结合 site + base 计算得到）
+const canonicalURL = Astro.url.href;
+const site = Astro.site ?? new URL('https://uzuhu.github.io');
+
+// 基于路径（去除 base 前缀）逐段生成面包屑
+const base = import.meta.env.BASE_URL || '/';
+const relPath = Astro.url.pathname
+  .slice(base.length)
+  .replace(/^\/+|\/+$/g, '');
+const segs = relPath ? relPath.split('/') : [];
+
+const humanize = (slug: string): string =>
+  slug
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+
+const breadcrumbs: { name: string; url: string }[] = [
+  { name: route.siteTitle || 'Home', url: new URL(base, site).href },
+];
+let acc = base.replace(/\/$/, '');
+segs.forEach((seg, idx) => {
+  acc += '/' + seg;
+  const url = new URL(acc + '/', site).href;
+  const isLast = idx === segs.length - 1;
+  breadcrumbs.push({
+    name: isLast ? (data?.title ?? humanize(seg)) : humanize(seg),
+    url,
+  });
+});
+---
+
+<DefaultHead />
+{
+  canInject && (
+    <GeoSeo
+      title={data.title}
+      description={data.description}
+      url={canonicalURL}
+      publishDate={data.publishDate ? data.publishDate.toISOString() : undefined}
+      updatedDate={data.updatedDate ? data.updatedDate.toISOString() : undefined}
+      authorName={data.author}
+      publisherName="uzuhu"
+      faq={data.faq}
+      breadcrumbs={breadcrumbs}
+    />
+  )
+}

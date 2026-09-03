@@ -1,0 +1,17 @@
+---
+/**
+ * PageTitle.astro（Starlight 组件覆盖）
+ * 用语义化 <header> 包裹 H1（保留 Starlight 默认标题渲染），
+ * 并在标题下方注入“核心要点”高亮卡片（来自 frontmatter 的 takeaways 字段）。
+ */
+import DefaultPageTitle from '@astrojs/starlight/components/PageTitle.astro';
+import KeyTakeaways from './KeyTakeaways.astro';
+
+const data = Astro.locals.starlightRoute.entry?.data;
+const takeaways = data?.takeaways;
+---
+
+<header class="geo-article-header">
+  <DefaultPageTitle />
+  {takeaways && takeaways.length > 0 && <KeyTakeaways items={takeaways} />}
+</header>
