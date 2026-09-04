@@ -1,129 +1,260 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getWikiEntries, groupByStep, entryHref, wikiIndexHref } from '../lib/wiki';
+import { getWikiEntries, groupByStep, entryHref, relatedEntries, wikiIndexHref } from '../lib/wiki';
+import { WORKFLOW } from '../lib/workflow';
+import { render } from 'astro:content';
 
 const entries = await getWikiEntries();
 const groups = groupByStep(entries);
+
+// 构建期渲染全部词条正文，作为阅读器的隐藏面板
+const rendered = await Promise.all(
+  entries.map(async (entry) => {
+    const { Content } = await render(entry);
+    const step = WORKFLOW.find((s) => s.id === entry.data.step);
+    const stepIndex = step ? WORKFLOW.findIndex((s) => s.id === step.id) + 1 : 0;
+    const related = relatedEntries(entries, entry.data.related ?? []);
+    const tools = entry.data.tools ?? [];
+    return { entry, Content, step, stepIndex, related, tools };
+  })
+);
 ---
 
 <Base
   title="GEO 指南"
-  description={`做 GEO，就这 ${groups.length} 步：每一步列出你会遇到的问题，一问一词条，点开即看完整答案，并附可用工具。`}
+  description={`GEO 知识库：${entries.length} 个词条，一问一答案。左侧按做 GEO 的流程分组，点哪看哪，不用跳页。`}
 >
-  <main id="main" class="page page--home">
-    <section class="hero">
-      <p class="kicker">生成式引擎优化 · GEO</p>
-      <h1>做 GEO，就这 {groups.length} 步</h1>
-      <p class="hero__lead">
-        每一步：你会遇到什么问题、怎么解决、用什么工具。一问一词条，点开即看完整答案。
-      </p>
-      <p class="hero__sub">
-        <a href={wikiIndexHref()}>直接浏览全部 {entries.length} 个词条 →</a>
-      </p>
-    </section>
+  <main id="main" class="page page--reader">
+    <div class="reader">
+      <!-- 左栏：流程分组的词条目录树 -->
+      <nav class="rd-side" aria-label="词条目录">
+        <div class="rd-side__bar">
+          <input
+            class="rd-filter"
+            type="search"
+            placeholder="在目录里筛选问题…"
+            autocomplete="off"
+            data-rd-filter
+            aria-label="筛选词条"
+          />
+          <p class="rd-side__count" data-rd-count>{entries.length} 个词条 · {groups.length} 步</p>
+        </div>
+        <div class="rd-side__scroll" data-rd-tree>
+          {
+            groups.map(({ step, entries: stepEntries }, i) => (
+              <section class="rd-group" data-rd-group>
+                <p class="rd-group__title">
+                  <span class="rd-group__num">{String(i + 1).padStart(2, '0')}</span>
+                  {step.title}
+                  <span class="rd-group__count">{stepEntries.length}</span>
+                </p>
+                <ul class="rd-group__list">
+                  {stepEntries.map((entry) => (
+                    <li>
+                      <a class="rd-link" href={entryHref(entry.id)} data-slug={entry.id}>
+                        {entry.data.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))
+          }
+        </div>
+      </nav>
 
-    <ol class="flow">
-      {
-        groups.map(({ step, entries }, i) => (
-          <li class="flow-step">
-            <details class="flow-step__panel">
-              <summary class="flow-step__head">
-                <span class="flow-step__num" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <span class="flow-step__titles">
-                  <strong class="flow-step__title">{step.title}</strong>
-                  <span class="flow-step__goal">{step.goal}</span>
-                </span>
-                <span class="flow-step__meta">
-                  <span>{entries.length} 个词条</span>
-                  {step.tools.length > 0 && <span>{step.tools.length} 个工具</span>}
-                  <svg
-                    class="flow-step__chevron"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M6 9l6 6 6-6"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </summary>
+      <!-- 右栏：即点即显示的答案面板 -->
+      <div class="rd-main" data-rd-main>
+        <noscript>
+          <p class="rd-noscript">
+            阅读器需要 JavaScript。<a href={wikiIndexHref()}>直接浏览词条库（每问一页）</a>。
+          </p>
+        </noscript>
 
-              <div class="flow-step__body">
-                <p class="flow-step__when">你在这一步：{step.when}</p>
+        {
+          rendered.map(({ entry, Content, step, stepIndex, related, tools }) => (
+            <article class="rd-pane" id={`pane-${entry.id}`} data-slug={entry.id} hidden>
+              <header class="rd-pane__header">
+                <p class="kicker">
+                  {step ? `${step.title} · 第 ${stepIndex} 步` : '词条'}
+                </p>
+                <h1>{entry.data.title}</h1>
+                <section class="entry-answer" aria-label="一句话答案">
+                  <p class="entry-answer__label">一句话答案</p>
+                  <p class="entry-answer__text">{entry.data.answer}</p>
+                </section>
+              </header>
 
-                <section class="flow-sec" aria-label="这一步的问题与解答">
-                  <h2>你会遇到的问题（点开看完整答案）</h2>
-                  <ul class="q-list">
-                    {entries.map((entry) => (
-                      <li class="q-item">
-                        <a class="q-entry" href={entryHref(entry.id)}>
-                          <span class="q-entry__q" aria-hidden="true">Q</span>
-                          <span class="q-entry__body">
-                            <strong class="q-entry__title">{entry.data.title}</strong>
-                            <span class="q-entry__answer">{entry.data.answer}</span>
-                          </span>
-                          <svg
-                            class="q-entry__chevron"
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            aria-hidden="true"
-                          >
-                            <path
-                              d="M9 6l6 6-6 6"
-                              stroke="currentColor"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                          </svg>
+              <div class="prose rd-pane__body" data-geo-content>
+                <Content />
+              </div>
+
+              {tools.length > 0 && (
+                <section class="flow-sec entry-tools" aria-label="顺手可用的工具">
+                  <h2>顺手可用的工具</h2>
+                  <ul class="tool-list">
+                    {tools.map((tool) => (
+                      <li class="tool-card">
+                        <a class="tool-card__name" href={tool.url} target="_blank" rel="noopener noreferrer">
+                          {tool.name}
+                          {tool.badge && <span class="tool-card__badge">{tool.badge}</span>}
                         </a>
+                        {tool.desc && <p class="tool-card__desc">{tool.desc}</p>}
                       </li>
                     ))}
                   </ul>
                 </section>
+              )}
 
-                {step.tools.length > 0 && (
-                  <section class="flow-sec" aria-label="这一步可用的工具">
-                    <h2>这一步的工具</h2>
-                    <ul class="tool-list">
-                      {step.tools.map((tool) => (
-                        <li class="tool-card">
-                          <a
-                            class="tool-card__name"
-                            href={tool.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {tool.name}
-                            {tool.badge && <span class="tool-card__badge">{tool.badge}</span>}
-                          </a>
-                          <p class="tool-card__desc">{tool.desc}</p>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
-              </div>
-            </details>
-          </li>
-        ))
-      }
-    </ol>
+              {related.length > 0 && (
+                <section class="related" aria-label="参见">
+                  <h2>参见</h2>
+                  <ul>
+                    {related.map((item) => (
+                      <li>
+                        <a href={item.href}>{item.title}</a>
+                        <p class="related__hint">{item.answer}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
 
-    <p class="q-foot">
-      <span>想一口气看全部？</span>
-      <a href={wikiIndexHref()}>浏览词条库（{entries.length} 个词条）→</a>
-    </p>
+              <p class="rd-pane__canonical">
+                <a href={entryHref(entry.id)} target="_blank" rel="noopener">独立页打开（利于分享/被 AI 引用）↗</a>
+              </p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- 窄屏：浮动目录按钮 -->
+    <button class="rd-fab" type="button" data-rd-fab hidden>☰ 目录</button>
   </main>
 </Base>
+
+<script>
+  function initReader() {
+    const main = document.querySelector<HTMLElement>('[data-rd-main]');
+    const tree = document.querySelector<HTMLElement>('[data-rd-tree]');
+    const side = document.querySelector<HTMLElement>('.rd-side');
+    const fab = document.querySelector<HTMLButtonElement>('[data-rd-fab]');
+    const filter = document.querySelector<HTMLInputElement>('[data-rd-filter]');
+    const count = document.querySelector<HTMLElement>('[data-rd-count]');
+    if (!main || !tree) return;
+
+    const panes = Array.from(main.querySelectorAll<HTMLElement>('.rd-pane'));
+    const slugs = panes.map((p) => p.dataset.slug ?? '');
+    const total = slugs.length;
+    const groups = Array.from(tree.querySelectorAll<HTMLElement>('[data-rd-group]'));
+
+    function wrapTables(root: ParentNode) {
+      root.querySelectorAll('table').forEach((table) => {
+        const parent = table.parentElement;
+        if (!parent || parent.classList.contains('geo-table-wrap')) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'geo-table-wrap';
+        parent.insertBefore(wrap, table);
+        wrap.appendChild(table);
+      });
+    }
+
+    function setActive(slug: string) {
+      document.querySelectorAll('.rd-link').forEach((a) => {
+        a.classList.toggle('is-active', (a as HTMLElement).dataset.slug === slug);
+      });
+      if (side) side.classList.remove('open');
+      if (fab) fab.hidden = window.innerWidth > 920;
+    }
+
+    function open(slug: string, updateHash = true) {
+      if (!slugs.includes(slug)) return false;
+      panes.forEach((p) => {
+        p.hidden = p.dataset.slug !== slug;
+      });
+      if (updateHash) history.replaceState(null, '', `#${slug}`);
+      setActive(slug);
+      wrapTables(main);
+      window.scrollTo({ top: 0 });
+      const activeLink = document.querySelector(`.rd-link[data-slug="${slug}"]`);
+      activeLink?.scrollIntoView({ block: 'nearest' });
+      return true;
+    }
+
+    // 拦截目录点击：就地切换，不跳页
+    tree.addEventListener('click', (e) => {
+      const anchor = (e.target as HTMLElement).closest('a[data-slug]');
+      if (!anchor) return;
+      e.preventDefault();
+      open(anchor.dataset.slug ?? '');
+    });
+
+    // 拦截面板内互链（正文/参见里的词条链接）与移动端顶栏当前题
+    main.addEventListener('click', (e) => {
+      const anchor = (e.target as HTMLElement).closest('a');
+      if (!anchor) return;
+      const slug = anchor.dataset.slug ?? resolveSlug(anchor);
+      if (slug) {
+        e.preventDefault();
+        open(slug);
+      }
+    });
+
+    // 把解析出的同站词条链接打上 data-slug，便于拦截
+    function resolveSlug(anchor: HTMLAnchorElement): string | null {
+      if (anchor.target === '_blank') return null;
+      let url: URL;
+      try {
+        url = new URL(anchor.getAttribute('href') ?? '', location.href);
+      } catch {
+        return null;
+      }
+      if (url.origin !== location.origin && url.origin !== 'null') return null;
+      if (url.hash && !url.pathname.endsWith('.html') && url.pathname === location.pathname) return null;
+      const segs = url.pathname.replace(/\/+$/, '').split('/');
+      for (let i = segs.length - 1; i >= 0; i--) {
+        if (slugs.includes(segs[i])) return segs[i];
+      }
+      return null;
+    }
+
+    // 目录筛选
+    if (filter) {
+      filter.addEventListener('input', () => {
+        const q = filter.value.trim().toLowerCase();
+        let visible = 0;
+        groups.forEach((group) => {
+          let groupVisible = 0;
+          group.querySelectorAll<HTMLAnchorElement>('.rd-link').forEach((a) => {
+            const hit = !q || (a.textContent ?? '').toLowerCase().includes(q);
+            a.parentElement?.classList.toggle('is-hidden', !hit);
+            if (hit) groupVisible++;
+          });
+          group.classList.toggle('is-hidden', groupVisible === 0);
+          visible += groupVisible;
+        });
+        if (count) count.textContent = q ? `${visible} / ${total} 个词条` : `${total} 个词条 · ${groups.length} 步`;
+      });
+    }
+
+    // 窄屏抽屉
+    if (fab) {
+      fab.hidden = window.innerWidth <= 920 ? false : true;
+      fab.addEventListener('click', () => side?.classList.toggle('open'));
+      side?.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('a[data-slug]')) side.classList.remove('open');
+      });
+    }
+
+    // 深链：#slug 直达词条
+    const initial = decodeURIComponent(location.hash.replace('#', ''));
+    if (!open(initial)) open(slugs[0]);
+    window.addEventListener('hashchange', () => {
+      const slug = decodeURIComponent(location.hash.replace('#', ''));
+      if (slug) open(slug, false);
+    });
+  }
+
+  initReader();
+</script>
