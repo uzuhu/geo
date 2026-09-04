@@ -1642,3 +1642,102 @@ code {
 .page--list .tool-list {
   margin: 0;
 }
+
+/* 工具阅读器：按钮、徽章、面板 */
+.rd-link__badge {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.rd-pane--tool h1 {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.rd-pane__lead {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--muted);
+  margin: 0.8rem 0 0;
+}
+
+.rd-pane__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1.2rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: color-mix(in srgb, var(--accent) 88%, #000);
+  border-color: color-mix(in srgb, var(--accent) 88%, #000);
+  color: #fff;
+}
+
+.btn--ghost {
+  background: transparent;
+}
+
+.tool-badge {
+  display: inline-block;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  vertical-align: middle;
+  letter-spacing: 0.02em;
+}
+
+.tool-badge--lg {
+  font-size: 13px;
+  padding: 0.22rem 0.65rem;
+}
+
+.rd-pane--tool .flow-sec {
+  margin-top: 2rem;
+}
+
+.rd-pane--tool .flow-sec h2 {
+  font-size: 1.15rem;
+  margin-bottom: 0.65rem;
+}

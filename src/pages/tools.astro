@@ -1,64 +1,129 @@
 ---
-import Base from '../layouts/Base.astro';
+import Reader from '../layouts/Reader.astro';
 import { WORKFLOW } from '../lib/workflow';
-import { withBase } from '../lib/wiki';
 
-const toolGroups = WORKFLOW.filter((step) => step.tools.length > 0);
+const toolGroups = WORKFLOW.map((step, i) => ({
+  step,
+  stepIndex: i + 1,
+  tools: step.tools.map((tool, ti) => ({
+    ...tool,
+    slug: `t-${step.id}-${ti}`,
+  })),
+})).filter((g) => g.tools.length > 0);
+
 const totalTools = toolGroups.reduce((sum, g) => sum + g.tools.length, 0);
-const home = withBase('/');
+const firstSlug = toolGroups[0]?.tools[0]?.slug ?? '';
 ---
 
-<Base
+<Reader
   title="GEO 工具箱"
   description={`做 GEO 各阶段趁手的工具：现状分析、技术检测、外部信源、效果监测，共 ${totalTools} 个，标注免费/试用/付费。`}
+  class="page--tools-reader"
 >
-  <main id="main" class="page page--list">
-    <header class="list-hero">
-      <p class="kicker">工具箱</p>
-      <h1>每一步，都有趁手的工具</h1>
-      <p>
-        按 GEO 流程阶段整理的 {totalTools} 个工具，标注了免费 / 试用 / 付费。
-        起步阶段只用免费的那几个就够：先测现状，再修地基，别急着花钱。
+  <!-- 左栏：按流程分组列出工具 -->
+  <nav slot="nav" class="rd-side rd-side--tools" aria-label="工具目录">
+    <div class="rd-side__bar">
+      <p class="rd-side__count">
+        {totalTools} 个工具 · {toolGroups.length} 个阶段<br />
+        点左侧工具，右侧看详情与用法
       </p>
-    </header>
-
-    <nav class="tools-jump" aria-label="按阶段跳转">
+    </div>
+    <div class="rd-side__scroll" data-rd-tree>
       {
-        toolGroups.map((step, i) => (
-          <a href={`#${step.id}`}>
-            {String(i + 1).padStart(2, '0')} {step.title}
-            <span>{step.tools.length}</span>
-          </a>
+        toolGroups.map(({ step, stepIndex, tools }, i) => (
+          <details class="rd-group" data-rd-group data-step={step.id}>
+            <summary class="rd-group__title" title={step.goal}>
+              <span class="rd-group__num">{String(stepIndex).padStart(2, '0')}</span>
+              <span class="rd-group__name">{step.title}</span>
+              <span class="rd-group__count">{tools.length}</span>
+              <svg
+                class="rd-group__chevron"
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9 6l6 6-6 6"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </summary>
+            <ul class="rd-group__list">
+              {tools.map((tool) => (
+                <li>
+                  <a class="rd-link" href={`#${tool.slug}`} data-slug={tool.slug}>
+                    {tool.name}
+                    {tool.badge && <span class="rd-link__badge">{tool.badge}</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
         ))
       }
-    </nav>
+    </div>
+  </nav>
+
+  <!-- 右栏：工具详情面板 -->
+  <div slot="panels" class="rd-main" data-rd-main>
+    <noscript>
+      <p class="rd-noscript">阅读器需要 JavaScript 才能切换工具。请启用脚本，或直接访问工具官网。</p>
+    </noscript>
 
     {
-      toolGroups.map((step, i) => (
-        <section class="q-group" id={step.id} aria-labelledby={`tg-${step.id}`}>
-          <header class="q-group__head">
-            <span class="q-group__badge">流程第 {WORKFLOW.findIndex((s) => s.id === step.id) + 1} 步</span>
-            <h2 id={`tg-${step.id}`}>{step.title}：{step.goal}</h2>
-            <span class="q-group__count">{step.tools.length} 个工具</span>
-          </header>
-          <ul class="tool-list">
-            {step.tools.map((tool) => (
-              <li class="tool-card tool-card--page">
-                <a class="tool-card__name" href={tool.url} target="_blank" rel="noopener noreferrer">
-                  {tool.name}
-                  {tool.badge && <span class="tool-card__badge">{tool.badge}</span>}
+      toolGroups.map(({ step, stepIndex, tools }) =>
+        tools.map((tool) => (
+          <article class="rd-pane rd-pane--tool" id={`pane-${tool.slug}`} data-slug={tool.slug} hidden>
+            <header class="rd-pane__header">
+              <p class="kicker">
+                工具箱 · 第 {stepIndex} 步 {step.title}
+              </p>
+              <h1>
+                {tool.name}
+                {tool.badge && <span class="tool-badge tool-badge--lg">{tool.badge}</span>}
+              </h1>
+              <p class="rd-pane__lead">{tool.desc}</p>
+              <div class="rd-pane__actions">
+                <a class="btn btn--primary" href={tool.url} target="_blank" rel="noopener noreferrer">
+                  访问工具 ↗
                 </a>
-                {tool.desc && <p class="tool-card__desc">{tool.desc}</p>}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))
-    }
+                <button class="btn btn--ghost" type="button" data-copy-link data-slug={tool.slug}>
+                  复制链接
+                </button>
+              </div>
+            </header>
 
-    <p class="tools-foot">
-      没有一步到位的「GEO 神器」——先用免费工具跑通流程，确认有效再上付费监测。
-      回到 <a href={home}>流程主线</a> 继续往下走。
-    </p>
-  </main>
-</Base>
+            <section class="rd-pane__body flow-sec" aria-labelledby={`why-${tool.slug}`}>
+              <h2 id={`why-${tool.slug}`}>什么时候用它</h2>
+              <p>{step.when}</p>
+              <p>
+                <strong>这一步的目标：</strong>
+                {step.goal}
+              </p>
+            </section>
+          </article>
+        ))
+      )
+    }
+  </div>
+</Reader>
+
+<script>
+  // 复制当前工具链接
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-copy-link]');
+    if (!btn) return;
+    const slug = (btn as HTMLElement).dataset.slug ?? '';
+    const url = `${location.origin}${location.pathname}#${slug}`;
+    navigator.clipboard.writeText(url).then(() => {
+      const original = (btn as HTMLButtonElement).textContent ?? '';
+      (btn as HTMLButtonElement).textContent = '已复制';
+      setTimeout(() => ((btn as HTMLButtonElement).textContent = original), 1500);
+    });
+  });
+</script>

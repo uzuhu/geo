@@ -1,0 +1,131 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  class?: string;
+}
+
+const { title, description, class: cls } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <main id="main" class={`page page--reader ${cls ?? ''}`.trim()}>
+    <div class="reader">
+      <slot name="nav" />
+      <slot name="panels" />
+    </div>
+
+    <!-- 窄屏：浮动目录按钮 -->
+    <button class="rd-fab" type="button" data-rd-fab hidden>☰ 目录</button>
+  </main>
+</Base>
+
+<script>
+  function initReader() {
+    const main = document.querySelector<HTMLElement>('[data-rd-main]');
+    const tree = document.querySelector<HTMLElement>('[data-rd-tree]');
+    const side = document.querySelector<HTMLElement>('.rd-side');
+    const fab = document.querySelector<HTMLButtonElement>('[data-rd-fab]');
+    if (!main || !tree) return;
+
+    const panes = Array.from(main.querySelectorAll<HTMLElement>('.rd-pane'));
+    const slugs = panes.map((p) => p.dataset.slug ?? '');
+    const groups = Array.from(tree.querySelectorAll<HTMLDetailsElement>('[data-rd-group]'));
+
+    function wrapTables(root: ParentNode) {
+      root.querySelectorAll('table').forEach((table) => {
+        const parent = table.parentElement;
+        if (!parent || parent.classList.contains('geo-table-wrap')) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'geo-table-wrap';
+        parent.insertBefore(wrap, table);
+        wrap.appendChild(table);
+      });
+    }
+
+    function setActive(slug: string) {
+      document.querySelectorAll('.rd-link').forEach((a) => {
+        a.classList.toggle('is-active', (a as HTMLElement).dataset.slug === slug);
+      });
+      // 只展开当前词条/工具所在的组，其余保持折叠
+      groups.forEach((g) => {
+        const contains = g.querySelector(`.rd-link[data-slug="${slug}"]`) !== null;
+        g.open = contains;
+      });
+      if (side) side.classList.remove('open');
+      if (fab) fab.hidden = window.innerWidth > 920;
+    }
+
+    function open(slug: string, updateHash = true) {
+      if (!slugs.includes(slug)) return false;
+      panes.forEach((p) => {
+        p.hidden = p.dataset.slug !== slug;
+      });
+      if (updateHash) history.replaceState(null, '', `#${slug}`);
+      setActive(slug);
+      wrapTables(main);
+      window.scrollTo({ top: 0 });
+      const activeLink = document.querySelector(`.rd-link[data-slug="${slug}"]`);
+      activeLink?.scrollIntoView({ block: 'nearest' });
+      return true;
+    }
+
+    // 拦截目录点击：就地切换，不跳页
+    tree.addEventListener('click', (e) => {
+      const anchor = (e.target as HTMLElement).closest('a[data-slug]');
+      if (!anchor) return;
+      e.preventDefault();
+      open(anchor.dataset.slug ?? '');
+    });
+
+    // 拦截面板内互链（正文/参见里的词条链接）与移动端顶栏当前题
+    main.addEventListener('click', (e) => {
+      const anchor = (e.target as HTMLElement).closest('a');
+      if (!anchor) return;
+      const slug = anchor.dataset.slug ?? resolveSlug(anchor);
+      if (slug) {
+        e.preventDefault();
+        open(slug);
+      }
+    });
+
+    // 把解析出的同站词条/工具链接打上 data-slug，便于拦截
+    function resolveSlug(anchor: HTMLAnchorElement): string | null {
+      if (anchor.target === '_blank') return null;
+      let url: URL;
+      try {
+        url = new URL(anchor.getAttribute('href') ?? '', location.href);
+      } catch {
+        return null;
+      }
+      if (url.origin !== location.origin && url.origin !== 'null') return null;
+      if (url.hash && !url.pathname.endsWith('.html') && url.pathname === location.pathname) return null;
+      const segs = url.pathname.replace(/\/+$/, '').split('/');
+      for (let i = segs.length - 1; i >= 0; i--) {
+        if (slugs.includes(segs[i])) return segs[i];
+      }
+      return null;
+    }
+
+    // 窄屏抽屉
+    if (fab) {
+      fab.hidden = window.innerWidth <= 920 ? false : true;
+      fab.addEventListener('click', () => side?.classList.toggle('open'));
+      side?.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('a[data-slug]')) side.classList.remove('open');
+      });
+    }
+
+    // 深链：#slug 直达词条/工具
+    const initial = decodeURIComponent(location.hash.replace('#', ''));
+    if (!open(initial)) open(slugs[0]);
+    window.addEventListener('hashchange', () => {
+      const slug = decodeURIComponent(location.hash.replace('#', ''));
+      if (slug) open(slug, false);
+    });
+  }
+
+  initReader();
+</script>
