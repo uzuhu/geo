@@ -1,0 +1,22 @@
+# GEO 指南
+
+> 面向 ChatGPT、Claude、Perplexity 与 Google AI Overviews 的生成式引擎优化（GEO）实战知识库。按「问题 → 方法 → 度量」组织，持续更新。
+
+## 入门
+- [GEO 优化入门指南](https://uzuhu.github.io/geo/guides/what-is-geo/)：GEO 的定义、由来（普林斯顿 KDD 2024 研究）与三大支柱。
+
+## 策略
+- [GEO 优化策略：9 项被验证的内容战术](https://uzuhu.github.io/geo/guides/geo-strategies/)：引用 +41%、数据 +31%、流畅度 +28%，以及唯一负向的关键词堆砌（−8%）。
+- [GEO 实战教程：90 天落地路线图](https://uzuhu.github.io/geo/guides/geo-playbook/)：从审计可见度、技术地基、逐页改造到实体权威与多平台分发的端到端方法。
+
+## 对照
+- [GEO 与 SEO：核心差异与互补关系](https://uzuhu.github.io/geo/guides/geo-vs-seo/)：为什么「SEO 是 GEO 的基础」，以及两者的度量与平台差异。
+
+## 度量
+- [如何度量 GEO 效果](https://uzuhu.github.io/geo/guides/measure-geo/)：三层度量栈、核心 KPI 与 Prompt Panel 实操。
+
+## 技术
+- [AI 爬虫与 robots.txt 配置](https://uzuhu.github.io/geo/guides/ai-crawlers/)：主流 AI 爬虫 UA 清单与对 AI 友好的 robots.txt 模板。
+
+## 索引
+- [站点地图](https://uzuhu.github.io/geo/sitemap-index.xml)
