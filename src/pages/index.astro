@@ -26,28 +26,39 @@ const rendered = await Promise.all(
 >
   <main id="main" class="page page--reader">
     <div class="reader">
-      <!-- 左栏：流程分组的词条目录树 -->
+      <!-- 左栏：按流程分组的折叠目录（顶栏 ⌘K / Ctrl+K 可全库搜索） -->
       <nav class="rd-side" aria-label="词条目录">
         <div class="rd-side__bar">
-          <input
-            class="rd-filter"
-            type="search"
-            placeholder="在目录里筛选问题…"
-            autocomplete="off"
-            data-rd-filter
-            aria-label="筛选词条"
-          />
-          <p class="rd-side__count" data-rd-count>{entries.length} 个词条 · {groups.length} 步</p>
+          <p class="rd-side__count">
+            {entries.length} 个词条 · {groups.length} 步流程<br />
+            搜索请用顶栏 <kbd>Ctrl K</kbd>
+          </p>
         </div>
         <div class="rd-side__scroll" data-rd-tree>
           {
             groups.map(({ step, entries: stepEntries }, i) => (
-              <section class="rd-group" data-rd-group>
-                <p class="rd-group__title">
+              <details class="rd-group" data-rd-group data-step={step.id}>
+                <summary class="rd-group__title" title={step.goal}>
                   <span class="rd-group__num">{String(i + 1).padStart(2, '0')}</span>
-                  {step.title}
+                  <span class="rd-group__name">{step.title}</span>
                   <span class="rd-group__count">{stepEntries.length}</span>
-                </p>
+                  <svg
+                    class="rd-group__chevron"
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M9 6l6 6-6 6"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </summary>
                 <ul class="rd-group__list">
                   {stepEntries.map((entry) => (
                     <li>
@@ -57,7 +68,7 @@ const rendered = await Promise.all(
                     </li>
                   ))}
                 </ul>
-              </section>
+              </details>
             ))
           }
         </div>
@@ -140,14 +151,11 @@ const rendered = await Promise.all(
     const tree = document.querySelector<HTMLElement>('[data-rd-tree]');
     const side = document.querySelector<HTMLElement>('.rd-side');
     const fab = document.querySelector<HTMLButtonElement>('[data-rd-fab]');
-    const filter = document.querySelector<HTMLInputElement>('[data-rd-filter]');
-    const count = document.querySelector<HTMLElement>('[data-rd-count]');
     if (!main || !tree) return;
 
     const panes = Array.from(main.querySelectorAll<HTMLElement>('.rd-pane'));
     const slugs = panes.map((p) => p.dataset.slug ?? '');
-    const total = slugs.length;
-    const groups = Array.from(tree.querySelectorAll<HTMLElement>('[data-rd-group]'));
+    const groups = Array.from(tree.querySelectorAll<HTMLDetailsElement>('[data-rd-group]'));
 
     function wrapTables(root: ParentNode) {
       root.querySelectorAll('table').forEach((table) => {
@@ -163,6 +171,11 @@ const rendered = await Promise.all(
     function setActive(slug: string) {
       document.querySelectorAll('.rd-link').forEach((a) => {
         a.classList.toggle('is-active', (a as HTMLElement).dataset.slug === slug);
+      });
+      // 只展开当前词条所在的组，其余保持折叠
+      groups.forEach((g) => {
+        const contains = g.querySelector(`.rd-link[data-slug="${slug}"]`) !== null;
+        g.open = contains;
       });
       if (side) side.classList.remove('open');
       if (fab) fab.hidden = window.innerWidth > 920;
@@ -217,25 +230,6 @@ const rendered = await Promise.all(
         if (slugs.includes(segs[i])) return segs[i];
       }
       return null;
-    }
-
-    // 目录筛选
-    if (filter) {
-      filter.addEventListener('input', () => {
-        const q = filter.value.trim().toLowerCase();
-        let visible = 0;
-        groups.forEach((group) => {
-          let groupVisible = 0;
-          group.querySelectorAll<HTMLAnchorElement>('.rd-link').forEach((a) => {
-            const hit = !q || (a.textContent ?? '').toLowerCase().includes(q);
-            a.parentElement?.classList.toggle('is-hidden', !hit);
-            if (hit) groupVisible++;
-          });
-          group.classList.toggle('is-hidden', groupVisible === 0);
-          visible += groupVisible;
-        });
-        if (count) count.textContent = q ? `${visible} / ${total} 个词条` : `${total} 个词条 · ${groups.length} 步`;
-      });
     }
 
     // 窄屏抽屉

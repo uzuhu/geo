@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import { WORKFLOW } from '../lib/workflow';
+import { withBase } from '../lib/wiki';
+
+const toolGroups = WORKFLOW.filter((step) => step.tools.length > 0);
+const totalTools = toolGroups.reduce((sum, g) => sum + g.tools.length, 0);
+const home = withBase('/');
+---
+
+<Base
+  title="GEO 工具箱"
+  description={`做 GEO 各阶段趁手的工具：现状分析、技术检测、外部信源、效果监测，共 ${totalTools} 个，标注免费/试用/付费。`}
+>
+  <main id="main" class="page page--list">
+    <header class="list-hero">
+      <p class="kicker">工具箱</p>
+      <h1>每一步，都有趁手的工具</h1>
+      <p>
+        按 GEO 流程阶段整理的 {totalTools} 个工具，标注了免费 / 试用 / 付费。
+        起步阶段只用免费的那几个就够：先测现状，再修地基，别急着花钱。
+      </p>
+    </header>
+
+    <nav class="tools-jump" aria-label="按阶段跳转">
+      {
+        toolGroups.map((step, i) => (
+          <a href={`#${step.id}`}>
+            {String(i + 1).padStart(2, '0')} {step.title}
+            <span>{step.tools.length}</span>
+          </a>
+        ))
+      }
+    </nav>
+
+    {
+      toolGroups.map((step, i) => (
+        <section class="q-group" id={step.id} aria-labelledby={`tg-${step.id}`}>
+          <header class="q-group__head">
+            <span class="q-group__badge">流程第 {WORKFLOW.findIndex((s) => s.id === step.id) + 1} 步</span>
+            <h2 id={`tg-${step.id}`}>{step.title}：{step.goal}</h2>
+            <span class="q-group__count">{step.tools.length} 个工具</span>
+          </header>
+          <ul class="tool-list">
+            {step.tools.map((tool) => (
+              <li class="tool-card tool-card--page">
+                <a class="tool-card__name" href={tool.url} target="_blank" rel="noopener noreferrer">
+                  {tool.name}
+                  {tool.badge && <span class="tool-card__badge">{tool.badge}</span>}
+                </a>
+                {tool.desc && <p class="tool-card__desc">{tool.desc}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+
+    <p class="tools-foot">
+      没有一步到位的「GEO 神器」——先用免费工具跑通流程，确认有效再上付费监测。
+      回到 <a href={home}>流程主线</a> 继续往下走。
+    </p>
+  </main>
+</Base>

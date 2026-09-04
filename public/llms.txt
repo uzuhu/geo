@@ -1,8 +1,8 @@
 # GEO 指南
 
-> 面向 ChatGPT、Claude、Perplexity 与 Google AI Overviews 的生成式引擎优化（GEO）实战知识库。纯 Wiki 结构：一问一词条，标题即问题，页面即完整答案。按「建立认知 → 摸清现状 → 配好地基 → 改造内容 → 衡量效果 → 持续迭代」的落地流程组织，持续更新。
+> 面向 ChatGPT、Claude、Perplexity 与 Google AI Overviews 的生成式引擎优化（GEO）实战知识库。纯 Wiki 结构：一问一词条，标题即问题，页面即完整答案。按「看懂 GEO → 分析现状 → 打好技术地基 → 改造官网内容 → 外部发布造声量 → 衡量效果 → 持续迭代」的科学流程组织，持续更新。
 
-## 建立认知
+## 看懂 GEO
 
 - [GEO 是什么？](https://uzuhu.github.io/geo/wiki/what-is-geo/)：定义、生成式引擎与三大支柱。
 - [GEO 是谁提出的？有依据吗？](https://uzuhu.github.io/geo/wiki/who-coined-geo/)：普林斯顿 KDD 2024 论文与 GEO-bench 基准。
@@ -10,11 +10,13 @@
 - [GEO 会取代 SEO 吗？](https://uzuhu.github.io/geo/wiki/will-geo-replace-seo/)：检索+生成两阶段架构决定了双轨并行。
 - [零点击搜索对内容方意味着什么？](https://uzuhu.github.io/geo/wiki/zero-click-trend/)：69% 查询零点击，入口正转向「被 AI 提及」。
 
-## 摸清现状
+## 分析现状
 
 - [怎么测「我今天被 AI 看见了吗」？](https://uzuhu.github.io/geo/wiki/ai-visibility-baseline/)：10–20 个问题、四大引擎跑基线。
+- [竞品在 AI 里比我强，怎么分析？](https://uzuhu.github.io/geo/wiki/competitor-ai-analysis/)：同组提示词横向对标，差距在结构/信源/意图。
+- [怎么找出用户会问 AI 的问题（问询词库）？](https://uzuhu.github.io/geo/wiki/prompt-mapping/)：五个来源、三类分级、优先级排序。
 
-## 配好地基
+## 打好技术地基
 
 - [AI 爬虫有哪几类？不放行会怎样？](https://uzuhu.github.io/geo/wiki/ai-crawlers-blocked/)：主流 AI 爬虫清单与屏蔽后果。
 - [对 AI 友好的 robots.txt 怎么写？](https://uzuhu.github.io/geo/wiki/robots-txt-ai/)：可直接照抄的模板。
@@ -24,15 +26,19 @@
 - [结构化数据对 GEO 真的有用吗？](https://uzuhu.github.io/geo/wiki/structured-data-useful/)：TechArticle/FAQPage/BreadcrumbList。
 - [为什么内容写进 JavaScript 是 GEO 大忌？](https://uzuhu.github.io/geo/wiki/static-html-js/)：静态渲染 + 速度门槛 + 语义化 HTML。
 
-## 改造内容
+## 改造官网内容
 
 - [哪一项 GEO 策略效果最好？](https://uzuhu.github.io/geo/wiki/best-geo-strategy/)：9 项策略完整榜单（引用 +41%…堆砌 −8%）。
 - [关键词堆砌对 GEO 有害吗？](https://uzuhu.github.io/geo/wiki/keyword-stuffing-harm/)：唯一负向策略的原理。
 - [为什么「信息增益」这么重要？](https://uzuhu.github.io/geo/wiki/information-gain/)：被引用的最强预测因子。
 - [单篇内容要怎么改才算 GEO-ready？](https://uzuhu.github.io/geo/wiki/geo-ready-checklist/)：逐项检查清单。
 - [Perplexity、ChatGPT、Gemini 的侧重有什么不同？](https://uzuhu.github.io/geo/wiki/platform-differences/)：平台差异与针对性微调。
+
+## 外部发布造声量
+
 - [实体权威怎么建设？](https://uzuhu.github.io/geo/wiki/entity-authority/)：Wikidata、sameAs、外部共引。
 - [多平台分发该怎么做？](https://uzuhu.github.io/geo/wiki/multi-platform-distribution/)：选 2–3 个平台建立深度存在。
+- [发视频对 GEO 有用吗？多模态内容怎么做？](https://uzuhu.github.io/geo/wiki/video-multimodal-geo/)：视频的机器可读文本层是关键。
 
 ## 衡量效果
 
@@ -49,5 +55,6 @@
 
 ## 索引
 
+- [GEO 工具箱](https://uzuhu.github.io/geo/tools/)：按流程阶段整理的工具清单（免费/试用/付费）。
 - [词条库](https://uzuhu.github.io/geo/wiki/)
 - [站点地图](https://uzuhu.github.io/geo/sitemap-index.xml)

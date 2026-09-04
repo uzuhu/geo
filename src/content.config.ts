@@ -1,7 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-const STEP_IDS = ['understand', 'assess', 'foundation', 'rewrite', 'measure', 'iterate'] as const;
+const STEP_IDS = ['understand', 'assess', 'foundation', 'rewrite', 'distribute', 'measure', 'iterate'] as const;
 
 /**
  * 纯 Wiki 结构：一问一词条。
@@ -11,7 +11,7 @@ const STEP_IDS = ['understand', 'assess', 'foundation', 'rewrite', 'measure', 'i
  *
  * 必填：title（问题本身）、answer（一句话结论，页面 TL;DR 与摘要）、step（所属流程步骤）
  * 常用：order、related（参见词条 slug 列表）、tools（工具外链）、publishDate、author
- * step 取值：understand | assess | foundation | rewrite | measure | iterate
+ * step 取值：understand | assess | foundation | rewrite | distribute | measure | iterate
  * 步骤定义见 src/lib/workflow.ts
  */
 const wiki = defineCollection({

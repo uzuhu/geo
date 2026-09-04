@@ -1,8 +1,8 @@
 ---
 title: "实体权威怎么建设？"
 answer: "AI 优先引用它「认得」的实体。路径：创建/完善 Wikidata 条目、用 Schema sameAs 连接各平台身份、把 About/Team 页写成规范页、在权威行业媒体获得署名提及。让 AI 在多个可信来源里反复「撞见」你。"
-step: rewrite
-order: 6
+step: distribute
+order: 1
 publishDate: 2026-09-04
 author: "阿虎 / zuwho"
 related: [information-gain, multi-platform-distribution, geo-timeline]

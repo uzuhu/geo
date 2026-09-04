@@ -7,6 +7,7 @@ interface Props {
 
 const { homeHref } = Astro.props;
 const wikiHref = wikiIndexHref();
+const toolsHref = withBase('/tools/');
 ---
 
 <header class="site-header">
@@ -20,6 +21,7 @@ const wikiHref = wikiIndexHref();
     </a>
 
     <nav class="site-nav" aria-label="主导航">
+      <a href={toolsHref}>工具箱</a>
       <a href={wikiHref}>词条库</a>
     </nav>
 

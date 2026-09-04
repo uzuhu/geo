@@ -1,8 +1,8 @@
 ---
 title: "多平台分发该怎么做？"
 answer: "AI 的答案不只来自你的官网。在目标用户聚集的 2–3 个平台铺内容：Reddit/行业论坛（Perplexity 高频引用）、LinkedIn/公众号、YouTube（带字幕）、行业榜单。不要全平台铺。"
-step: rewrite
-order: 7
+step: distribute
+order: 2
 publishDate: 2026-09-04
 author: "阿虎 / zuwho"
 related: [entity-authority, platform-differences, information-gain]
