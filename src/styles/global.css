@@ -1004,3 +1004,191 @@ code {
 :root[data-theme="dark"] .astro-code span {
   color: var(--shiki-dark) !important;
 }
+
+/* Home · GEO 流程（6 步折叠视图） */
+.flow {
+  list-style: none;
+  margin: 2.5rem 0;
+  padding: 0;
+  counter-reset: flow;
+}
+
+.flow-step {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.flow-step:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+
+.flow-step__panel > summary {
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.05rem 1.25rem;
+}
+
+.flow-step__panel > summary::-webkit-details-marker { display: none; }
+
+.flow-step__num {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  min-width: 2.4rem;
+}
+
+.flow-step__titles {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.flow-step__title {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.flow-step__goal {
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.flow-step__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 12px;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.flow-step__meta span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+
+.flow-step__chevron {
+  color: var(--faint);
+  transition: transform 0.18s ease;
+}
+
+.flow-step__panel[open] .flow-step__chevron { transform: rotate(180deg); }
+
+.flow-step__panel[open] > summary {
+  border-bottom: 1px solid var(--line);
+  background: var(--accent-faint);
+}
+
+.flow-step__body {
+  padding: 1.25rem 1.25rem 1.5rem;
+}
+
+.flow-step__when {
+  margin: 0 0 1.1rem;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.flow-sec h2 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--faint);
+  text-transform: none;
+  letter-spacing: 0.08em;
+  margin: 1.35rem 0 0.65rem;
+}
+
+.flow-step__body > .flow-sec:first-of-type { margin-top: 0; }
+.flow-step__body > .flow-sec:first-of-type h2 { margin-top: 0; }
+
+.flow-sec .q-list { border-top: 1px solid var(--line); }
+
+.tool-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.tool-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.8rem 0.95rem;
+  background: color-mix(in srgb, var(--bg) 45%, var(--paper));
+}
+
+.tool-card__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+.tool-card__name:hover { color: var(--accent); text-decoration: none; }
+.tool-card__name::after {
+  content: "↗";
+  color: var(--accent);
+  font-size: 0.85em;
+}
+
+.tool-card__badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 0.08rem 0.5rem;
+}
+
+.tool-card__desc {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.flow-guides {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.guide-chip {
+  display: inline-block;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.guide-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .flow-step__panel > summary {
+    grid-template-columns: auto 1fr;
+  }
+
+  .flow-step__meta { display: none; }
+}

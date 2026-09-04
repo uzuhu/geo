@@ -89,6 +89,24 @@ export function buildQuestionGroups(guides: GuideEntry[], topicIds?: TopicId[]):
     .filter((g) => g.items.length > 0);
 }
 
+/** 按文章 id 列表抽取 FAQ 条目，供流程步骤页内联展示。picks 传问题关键词子串数组则只保留命中的条目。 */
+export function faqItemsForGuides(guides: GuideEntry[], ids: string[], picks?: string[]) {
+  return ids.flatMap((id) => {
+    const guide = guides.find((g) => g.id === id);
+    if (!guide) return [];
+    const faqs = guide.data.faq ?? [];
+    const selected = picks
+      ? faqs.filter((faq) => picks.some((p) => faq.question.includes(p)))
+      : faqs;
+    return selected.map((faq) => ({
+      question: faq.question,
+      answer: faq.answer,
+      href: `${guideHref(guide.id)}#${faqId(faq.question)}`,
+      guideTitle: guide.data.title,
+    }));
+  });
+}
+
 export function buildSearchIndex(guides: GuideEntry[]): SearchItem[] {
   const items: SearchItem[] = [];
   for (const guide of guides) {

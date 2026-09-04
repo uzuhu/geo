@@ -1,6 +1,5 @@
 ---
 import { withBase } from '../lib/guides';
-import { scenarioHref } from '../lib/scenarios';
 
 interface Props {
   homeHref: string;
@@ -8,7 +7,6 @@ interface Props {
 
 const { homeHref } = Astro.props;
 const guidesHref = withBase('/guides/');
-const scenariosHref = scenarioHref('cite').replace(/\/cite\/$/, '/');
 ---
 
 <header class="site-header">
@@ -22,7 +20,6 @@ const scenariosHref = scenarioHref('cite').replace(/\/cite\/$/, '/');
     </a>
 
     <nav class="site-nav" aria-label="主导航">
-      <a href={scenariosHref}>场景</a>
       <a href={guidesHref}>全部文章</a>
     </nav>
 

@@ -1,6 +1,6 @@
 # GEO 指南
 
-> 面向 ChatGPT、Claude、Perplexity 与 Google AI Overviews 的生成式引擎优化（GEO）实战知识库。按「问题 → 方法 → 度量」组织，持续更新。
+> 面向 ChatGPT、Claude、Perplexity 与 Google AI Overviews 的生成式引擎优化（GEO）实战知识库。按「建立认知 → 摸清现状 → 配好地基 → 改造内容 → 衡量效果 → 持续迭代」的落地流程组织，每步附问题解答与可用工具，持续更新。
 
 ## 入门
 - [GEO 优化入门指南](https://uzuhu.github.io/geo/guides/what-is-geo/)：GEO 的定义、由来（普林斯顿 KDD 2024 研究）与三大支柱。
