@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+import GuideCard from '../components/GuideCard.astro';
+import { getPublishedGuides, toCard, topicHref, withBase } from '../lib/guides';
+import { TOPICS } from '../lib/topics';
+
+const guides = await getPublishedGuides();
+const cards = guides.map(toCard);
+const faqs = guides.flatMap((guide) =>
+  (guide.data.faq ?? []).slice(0, 1).map((faq) => ({
+    question: faq.question,
+    href: `${toCard(guide).href}#faq`,
+    topic: toCard(guide).topic,
+  }))
+);
+const allHref = withBase('/guides/');
+---
+
+<Base title="GEO 指南" description="按问题查找 GEO 做法：入门、策略、度量与技术配置。持续用 Markdown 更新。">
+  <main id="main" class="page page--home">
+    <section class="hero">
+      <p class="kicker">生成式引擎优化</p>
+      <h1>先问问题，再读文章</h1>
+      <p class="hero__lead">
+        不想在侧栏里翻文档。直接搜你卡住的那件事，或从下面的问题进对应指南。
+      </p>
+      <button class="hero-search" type="button" data-open-search>
+        <span>搜索文章或问题，例如「关键词堆砌」</span>
+        <kbd>Ctrl K</kbd>
+      </button>
+    </section>
+
+    <section class="intents" aria-labelledby="intents-heading">
+      <header class="section-head">
+        <h2 id="intents-heading">你现在想搞清哪件事</h2>
+        <p>按真实使用场景入口，而不是按目录树。</p>
+      </header>
+      <div class="intent-grid">
+        {
+          TOPICS.map((topic) => (
+            <a class="intent-card" href={topicHref(topic.id)}>
+              <span class="intent-card__label">{topic.label}</span>
+              <strong>{topic.question}</strong>
+              <span>{topic.hint}</span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="home-guides" aria-labelledby="guides-heading">
+      <header class="section-head">
+        <h2 id="guides-heading">全部文章</h2>
+        <p>现在 {cards.length} 篇，按阅读顺序排列。新文章会自动加入检索和主题。</p>
+        <a class="section-head__link" href={allHref}>筛选与浏览</a>
+      </header>
+      <div class="guide-grid">
+        {
+          cards.map((card) => (
+            <GuideCard
+              href={card.href}
+              title={card.title}
+              description={card.description}
+              kicker={`${String(card.order ?? '').padStart(2, '0')} · ${card.topic}`}
+              featured={card.featured}
+            />
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="home-faq" aria-labelledby="faq-heading">
+      <header class="section-head">
+        <h2 id="faq-heading">别人常问</h2>
+        <p>点进去会落到对应文章的问答。</p>
+      </header>
+      <ul class="faq-jump">
+        {
+          faqs.map((item) => (
+            <li>
+              <a href={item.href}>
+                <span>{item.topic}</span>
+                {item.question}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</Base>

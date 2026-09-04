@@ -1,5 +1,8 @@
 ---
 title: "如何度量 GEO 效果"
+kicker: "效果度量"
+topic: measure
+order: 4
 description: "GEO 没有统一的 Google Search Console，但可度量。本文给出三层度量栈（GSC AI Overview、AI 品牌监测工具、手动 Prompt Panel）、核心 KPI、代理指标，以及一套可立即上手的 30–50 条 Prompt 监测法。"
 publishDate: 2026-09-03
 updatedDate: 2026-09-03
@@ -16,8 +19,6 @@ faq:
     answer: "是「引用率 / 品牌可见度得分」——在相关 Prompt 中，AI 答案有多大比例引用或提到你的品牌。它相当于 AI 时代的「排名」。其次是声量份额（你 vs 竞品被引用的比例）与 Prompt 覆盖率。"
   - question: "小团队没有预算买监测工具，怎么度量？"
     answer: "用「手动 Prompt Panel」：整理 30–50 条目标用户会问的问题，每月在主要 AI 引擎各跑一次，记录是否被引用、被如何描述、竞品是谁。坚持数月就能形成趋势线，且几乎零成本。"
-sidebar:
-  order: 4
 ---
 
 ## GEO 度量的独特挑战

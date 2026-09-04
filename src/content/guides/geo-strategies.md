@@ -1,5 +1,8 @@
 ---
 title: "GEO 优化策略：9 项被验证的内容战术"
+kicker: "内容战术"
+topic: strategy
+order: 2
 description: "基于普林斯顿 KDD 2024 论文的 GEO-bench 实验，拆解 9 项内容策略的真实效果（引用 +41%、数据 +31%、流畅度 +28%……），以及可立即落地的 GEO 实战清单与多平台差异。"
 publishDate: 2026-09-03
 updatedDate: 2026-09-03
@@ -16,8 +19,6 @@ faq:
     answer: "有害。论文中「关键词堆砌（Keyword Stuffing）」的评分为 17.7，低于未优化的基线 19.3，约下降 8%。重复目标短语不会提升、反而损害在生成式引擎中的可见度。"
   - question: "为什么「信息增益（Information Gain）」这么重要？"
     answer: "多项后续研究指出，内容的独特性与新颖度（Information Gain）是预测「是否会被引用」的最强信号，其重要性甚至超过域名权威、外链与关键词密度。"
-sidebar:
-  order: 2
 ---
 
 ## 来自普林斯顿论文的 9 项内容策略

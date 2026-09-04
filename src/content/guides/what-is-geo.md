@@ -1,5 +1,9 @@
 ---
 title: "GEO 优化入门指南"
+kicker: "入门指南"
+topic: intro
+order: 1
+featured: true
 description: "全面解析生成式引擎优化（GEO）的起源、核心概念与落地策略：从普林斯顿研究的 9 项内容策略，到结构化数据与语义化写作，让内容被 AI 准确理解、引用与归因。"
 publishDate: 2026-09-03
 updatedDate: 2026-09-03
@@ -18,8 +22,6 @@ faq:
     answer: "有用。JSON-LD（如 TechArticle、FAQPage、BreadcrumbList）帮助 AI 明确内容的类型、作者、时间线与问答关系，显著提升被准确引用的概率。"
   - question: "普通文章需要做什么改造才能做好 GEO？"
     answer: "保持清晰的 H1–H3 层级，补充发布/更新时间、作者信息，用 FAQ 覆盖用户真实问题，部署 JSON-LD，并配置对 AI 爬虫友好的 robots.txt 即可。"
-sidebar:
-  order: 1
 ---
 
 ## 什么是 GEO

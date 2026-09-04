@@ -1,5 +1,8 @@
 ---
 title: "AI 爬虫与 robots.txt 配置"
+kicker: "技术配置"
+topic: technical
+order: 5
 description: "生成式引擎要引用你的内容，第一步是能抓到它。本文列出主流 AI 爬虫（GPTBot、ClaudeBot、PerplexityBot、Google-Extended 等），给出对 AI 友好的 robots.txt 范例，以及验证爬虫可访问性的方法。"
 publishDate: 2026-09-03
 updatedDate: 2026-09-03
@@ -16,8 +19,6 @@ faq:
     answer: "Googlebot 服务于传统搜索与 AI Overviews；Google-Extended 是 Google 用于训练与生成式 AI 产品的抓取令牌（token），专门覆盖 Gemini 等生成式场景。两者建议都放行。"
   - question: "怎么验证 AI 爬虫能访问我的页面？"
     answer: "先用各大平台官方提供的验证方式（如 Google 的 robots.txt 测试工具）确认未被屏蔽；再用 curl 模拟对应 UA 抓取关键页面，确认返回 200 且正文可读。"
-sidebar:
-  order: 5
 ---
 
 ## 为什么放行 AI 爬虫是 GEO 的地基

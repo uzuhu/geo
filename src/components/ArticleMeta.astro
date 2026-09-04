@@ -1,0 +1,34 @@
+---
+/**
+ * 文章刊头元信息：作者、发布与更新日期。
+ */
+interface Props {
+  author?: string;
+  publishDate?: Date;
+  updatedDate?: Date;
+}
+
+const { author, publishDate, updatedDate } = Astro.props;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const sameDay =
+  publishDate &&
+  updatedDate &&
+  publishDate.toISOString().slice(0, 10) === updatedDate.toISOString().slice(0, 10);
+
+const hasMeta = Boolean(author || publishDate || updatedDate);
+---
+
+{
+  hasMeta && (
+    <p class="geo-meta">
+      {author && <span class="geo-meta__author">{author}</span>}
+      {publishDate && <time datetime={publishDate.toISOString()}>发布于 {fmt(publishDate)}</time>}
+      {updatedDate && !sameDay && (
+        <time datetime={updatedDate.toISOString()}>更新于 {fmt(updatedDate)}</time>
+      )}
+    </p>
+  )
+}

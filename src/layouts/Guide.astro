@@ -1,0 +1,154 @@
+---
+import Base from './Base.astro';
+import ArticleMeta from '../components/ArticleMeta.astro';
+import FaqSection from '../components/FaqSection.astro';
+import GeoSeo from '../components/GeoSeo.astro';
+import KeyTakeaways from '../components/KeyTakeaways.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import {
+  faqId,
+  getPublishedGuides,
+  guideHref,
+  neighbors,
+  relatedGuides,
+  topicHref,
+  withBase,
+  type GuideEntry,
+} from '../lib/guides';
+import { getTopic, type TopicId } from '../lib/topics';
+import { render } from 'astro:content';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  entry: GuideEntry;
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const data = entry.data;
+const topic = getTopic(data.topic as TopicId);
+const guides = await getPublishedGuides();
+const { prev, next } = neighbors(guides, entry.id);
+const related = relatedGuides(guides, entry);
+const site = Astro.site ?? new URL('https://uzuhu.github.io');
+const canonicalURL = new URL(Astro.url.pathname, site).href;
+const home = withBase('/');
+const faqItems = (data.faq ?? []).map((item) => ({
+  ...item,
+  id: faqId(item.question),
+}));
+
+const breadcrumbs = [
+  { name: 'GEO 指南', url: new URL(home, site).href },
+  { name: topic.label, url: new URL(topicHref(topic.id), site).href },
+  { name: data.title, url: canonicalURL },
+];
+---
+
+<Base title={data.title} description={data.description}>
+  <Fragment slot="head">
+    <GeoSeo
+      title={data.title}
+      description={data.description}
+      url={canonicalURL}
+      publishDate={data.publishDate ? data.publishDate.toISOString() : undefined}
+      updatedDate={data.updatedDate ? data.updatedDate.toISOString() : undefined}
+      authorName={data.author}
+      publisherName="uzuhu"
+      faq={data.faq}
+      breadcrumbs={breadcrumbs}
+    />
+  </Fragment>
+
+  <main id="main" class="page page--article">
+    <div class="article-shell">
+      <div class="article-main">
+        <nav class="crumbs" aria-label="面包屑">
+          <a href={home}>首页</a>
+          <span aria-hidden="true">/</span>
+          <a href={topicHref(topic.id)}>{topic.label}</a>
+        </nav>
+
+        <header class="article-header">
+          <p class="kicker">{data.kicker ?? topic.label}</p>
+          <h1>{data.title}</h1>
+          <ArticleMeta author={data.author} publishDate={data.publishDate} updatedDate={data.updatedDate} />
+        </header>
+
+        {data.takeaways && data.takeaways.length > 0 && <KeyTakeaways items={data.takeaways} />}
+
+        <details class="toc-mobile">
+          <summary>本篇目录</summary>
+          <TableOfContents headings={headings as Heading[]} />
+        </details>
+
+        <article class="prose" data-geo-content>
+          <Content />
+        </article>
+
+        {faqItems.length > 0 && <FaqSection items={faqItems} />}
+
+        <nav class="pager" aria-label="相邻文章">
+          {
+            prev ? (
+              <a href={guideHref(prev.id)}>
+                <span>上一篇</span>
+                <strong>{prev.data.title}</strong>
+              </a>
+            ) : (
+              <span></span>
+            )
+          }
+          {
+            next ? (
+              <a href={guideHref(next.id)}>
+                <span>下一篇</span>
+                <strong>{next.data.title}</strong>
+              </a>
+            ) : (
+              <span></span>
+            )
+          }
+        </nav>
+
+        {
+          related.length > 0 && (
+            <section class="related">
+              <h2>接下来可以读</h2>
+              <ul>
+                {related.map((item) => (
+                  <li>
+                    <a href={guideHref(item.id)}>{item.data.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+      </div>
+
+      <aside class="article-aside">
+        <TableOfContents headings={headings as Heading[]} />
+      </aside>
+    </div>
+  </main>
+</Base>
+
+<script>
+  function wrapGeoTables() {
+    document.querySelectorAll('[data-geo-content] table').forEach((table) => {
+      const parent = table.parentElement;
+      if (!parent || parent.classList.contains('geo-table-wrap')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'geo-table-wrap';
+      parent.insertBefore(wrap, table);
+      wrap.appendChild(table);
+    });
+  }
+  wrapGeoTables();
+</script>

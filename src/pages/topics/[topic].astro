@@ -1,0 +1,54 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideCard from '../../components/GuideCard.astro';
+import { getPublishedGuides, toCard, topicHref, withBase } from '../../lib/guides';
+import { TOPICS, getTopic, type TopicId } from '../../lib/topics';
+
+export function getStaticPaths() {
+  return TOPICS.map((topic) => ({ params: { topic: topic.id } }));
+}
+
+const topicId = Astro.params.topic as TopicId;
+const topic = getTopic(topicId);
+const guides = (await getPublishedGuides()).filter((guide) => guide.data.topic === topicId);
+const cards = guides.map(toCard);
+const allHref = withBase('/guides/');
+---
+
+<Base title={topic.question} description={`${topic.hint}。${topic.label}主题下的 GEO 指南。`}>
+  <main id="main" class="page page--list">
+    <header class="list-hero">
+      <p class="kicker">{topic.label}</p>
+      <h1>{topic.question}</h1>
+      <p>{topic.hint}</p>
+    </header>
+
+    <nav class="topic-pills" aria-label="主题">
+      <a href={allHref}>全部</a>
+      {
+        TOPICS.map((item) => (
+          <a class:list={[item.id === topicId && 'is-active']} href={topicHref(item.id)}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    {
+      cards.length > 0 ? (
+        <div class="guide-grid">
+          {cards.map((card) => (
+            <GuideCard
+              href={card.href}
+              title={card.title}
+              description={card.description}
+              kicker={card.kicker}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="empty">这个主题还没有文章。</p>
+      )
+    }
+  </main>
+</Base>

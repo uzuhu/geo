@@ -1,32 +1,40 @@
-import { defineCollection } from 'astro:content';
-import { docsLoader } from '@astrojs/starlight/loaders';
-import { docsSchema } from '@astrojs/starlight/schema';
-import { z } from 'astro/zod';
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
-// 知识库文档集合：在 Starlight 默认 frontmatter 之上扩展 GEO/SEO 字段
-export const collections = {
-  docs: defineCollection({
-    loader: docsLoader(),
-    schema: docsSchema({
-      extend: z.object({
-        // 发布日期（用于 TechArticle.datePublished）
-        publishDate: z.coerce.date().optional(),
-        // 更新日期（用于 TechArticle.dateModified）
-        updatedDate: z.coerce.date().optional(),
-        // 作者（用于 TechArticle.author）
-        author: z.string().optional(),
-        // 核心要点（Key Takeaways 高亮卡片）
-        takeaways: z.array(z.string()).optional(),
-        // 常见问题（自动生成 FAQPage 结构化数据）
-        faq: z
-          .array(
-            z.object({
-              question: z.string(),
-              answer: z.string(),
-            })
-          )
-          .optional(),
-      }),
-    }),
+const TOPIC_IDS = ['intro', 'compare', 'strategy', 'measure', 'technical'] as const;
+
+/**
+ * 新增文章：在 src/content/guides/ 下新建 Markdown 文件即可。
+ * 文件名即网址：foo.md → /guides/foo/
+ *
+ * 必填：title、description、topic
+ * 常用：kicker、order、takeaways、faq、publishDate、author
+ * topic 取值：intro | compare | strategy | measure | technical
+ * 若要新增主题，先改 src/lib/topics.ts
+ */
+const guides = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/guides' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    topic: z.enum(TOPIC_IDS),
+    kicker: z.string().optional(),
+    order: z.number().optional(),
+    featured: z.boolean().optional(),
+    draft: z.boolean().optional().default(false),
+    publishDate: z.coerce.date().optional(),
+    updatedDate: z.coerce.date().optional(),
+    author: z.string().optional(),
+    takeaways: z.array(z.string()).optional(),
+    faq: z
+      .array(
+        z.object({
+          question: z.string(),
+          answer: z.string(),
+        })
+      )
+      .optional(),
   }),
-};
+});
+
+export const collections = { guides };

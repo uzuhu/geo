@@ -1,5 +1,8 @@
 ---
 title: "GEO 与 SEO：核心差异与互补关系"
+kicker: "概念对照"
+topic: compare
+order: 3
 description: "用一张对比表讲清 GEO 与 SEO 在输出形态、查询方式、优化目标与成功指标上的差异，并解释为什么「SEO 是 GEO 的基础」——生成式引擎的两阶段架构决定了二者必须并行。"
 publishDate: 2026-09-03
 updatedDate: 2026-09-03
@@ -16,8 +19,6 @@ faq:
     answer: "SEO 的目标是让页面在传统搜索结果中排名更高、获得点击；GEO 的目标是让内容被生成式引擎在合成答案中引用、提及或推荐。前者争取「被找到」，后者争取「被引用」。"
   - question: "为什么要同时做 GEO 和 SEO？"
     answer: "传统搜索并未消失，Google 每天仍有数十亿次查询；同时 AI 搜索增长迅猛。两者服务用户旅程的不同环节，且 SEO 表现越强，被 AI 引用的概率也越高。"
-sidebar:
-  order: 3
 ---
 
 ## 一句话区分
