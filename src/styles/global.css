@@ -428,6 +428,155 @@ code {
   background: linear-gradient(180deg, var(--accent-faint), var(--paper));
 }
 
+/* Home · question index */
+.q-count {
+  margin: 1.5rem 0 0.4rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.q-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: min(42rem, 100%);
+  margin: 1.4rem 0 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+}
+
+.q-filter:focus-within {
+  border-color: var(--accent);
+}
+
+.q-filter svg {
+  flex: none;
+  color: var(--faint);
+}
+
+.q-filter input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.05rem;
+}
+
+.q-filter input:focus {
+  outline: none;
+}
+
+.q-index {
+  display: grid;
+  gap: 1.8rem;
+  margin-top: 1.8rem;
+}
+
+.q-group__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--accent);
+}
+
+.q-group__badge {
+  flex: none;
+  align-self: center;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.q-group__head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.q-group__count {
+  margin-left: auto;
+  color: var(--faint);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.q-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+
+.q-item a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.72rem 0.35rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.q-item a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.q-item__q {
+  color: var(--accent);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.q-item__from {
+  color: var(--faint);
+  font-size: 12px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.q-empty {
+  margin: 1.5rem 0;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.q-foot {
+  margin-top: 2.6rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  color: var(--muted);
+}
+
+.q-foot a {
+  font-weight: 700;
+}
+
+@media (min-width: 820px) {
+  .q-list {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1.6rem;
+  }
+}
+
 .faq-jump {
   list-style: none;
   margin: 0;

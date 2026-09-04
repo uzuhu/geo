@@ -1,91 +1,121 @@
 ---
 import Base from '../layouts/Base.astro';
-import GuideCard from '../components/GuideCard.astro';
-import { getPublishedGuides, toCard, topicHref, withBase } from '../lib/guides';
-import { TOPICS } from '../lib/topics';
+import { getPublishedGuides, guideHref, faqId, withBase } from '../lib/guides';
+import { TOPICS, getTopic } from '../lib/topics';
 
 const guides = await getPublishedGuides();
-const cards = guides.map(toCard);
-const faqs = guides.flatMap((guide) =>
-  (guide.data.faq ?? []).slice(0, 1).map((faq) => ({
-    question: faq.question,
-    href: `${toCard(guide).href}#faq`,
-    topic: toCard(guide).topic,
-  }))
-);
+
+const questionGroups = TOPICS.map((topic) => {
+  const items = guides
+    .filter((g) => g.data.topic === topic.id)
+    .sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999))
+    .flatMap((g) =>
+      (g.data.faq ?? []).map((faq) => ({
+        question: faq.question,
+        href: `${guideHref(g.id)}#${faqId(faq.question)}`,
+        guideTitle: g.data.title,
+      }))
+    );
+  return { id: topic.id, label: topic.label, question: topic.question, items };
+}).filter((g) => g.items.length > 0);
+
+const totalQuestions = questionGroups.reduce((n, g) => n + g.items.length, 0);
 const allHref = withBase('/guides/');
 ---
 
-<Base title="GEO 指南" description="按问题查找 GEO 做法：入门、策略、度量与技术配置。持续用 Markdown 更新。">
+<Base
+  title="GEO 指南"
+  description="按真实问题找 GEO 答案：入门、对照 SEO、内容策略、效果度量与技术配置。点一下直达解答。"
+>
   <main id="main" class="page page--home">
     <section class="hero">
-      <p class="kicker">生成式引擎优化</p>
-      <h1>先问问题，再读文章</h1>
+      <p class="kicker">生成式引擎优化 · GEO</p>
+      <h1>你的问题，这里都有答案</h1>
       <p class="hero__lead">
-        不想在侧栏里翻文档。直接搜你卡住的那件事，或从下面的问题进对应指南。
+        按真实问题分类，点一下直达解答。一时找不到，就直接搜。
       </p>
-      <button class="hero-search" type="button" data-open-search>
-        <span>搜索文章或问题，例如「关键词堆砌」</span>
+
+      <form class="q-filter" data-q-filter-form>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+          <path d="M20 20l-3.2-3.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <input
+          type="search"
+          data-q-filter
+          placeholder="搜你的问题，例如：关键词怎么放、怎么衡量效果"
+          aria-label="筛选问题"
+          autocomplete="off"
+        />
         <kbd>Ctrl K</kbd>
-      </button>
+      </form>
     </section>
 
-    <section class="intents" aria-labelledby="intents-heading">
-      <header class="section-head">
-        <h2 id="intents-heading">你现在想搞清哪件事</h2>
-        <p>按真实使用场景入口，而不是按目录树。</p>
-      </header>
-      <div class="intent-grid">
-        {
-          TOPICS.map((topic) => (
-            <a class="intent-card" href={topicHref(topic.id)}>
-              <span class="intent-card__label">{topic.label}</span>
-              <strong>{topic.question}</strong>
-              <span>{topic.hint}</span>
-            </a>
-          ))
-        }
-      </div>
-    </section>
+    <p class="q-count">共 {totalQuestions} 个高频问题，按主题归好类：</p>
 
-    <section class="home-guides" aria-labelledby="guides-heading">
-      <header class="section-head">
-        <h2 id="guides-heading">全部文章</h2>
-        <p>现在 {cards.length} 篇，按阅读顺序排列。新文章会自动加入检索和主题。</p>
-        <a class="section-head__link" href={allHref}>筛选与浏览</a>
-      </header>
-      <div class="guide-grid">
-        {
-          cards.map((card) => (
-            <GuideCard
-              href={card.href}
-              title={card.title}
-              description={card.description}
-              kicker={`${String(card.order ?? '').padStart(2, '0')} · ${card.topic}`}
-              featured={card.featured}
-            />
-          ))
-        }
-      </div>
-    </section>
+    <div class="q-index">
+      {
+        questionGroups.map((group) => (
+          <section class="q-group" data-q-group aria-labelledby={`qg-${group.id}`}>
+            <header class="q-group__head">
+              <span class="q-group__badge">{group.label}</span>
+              <h2 id={`qg-${group.id}`}>{group.question}</h2>
+              <span class="q-group__count">{group.items.length} 个问题</span>
+            </header>
+            <ul class="q-list">
+              {group.items.map((item) => (
+                <li
+                  class="q-item"
+                  data-q-item
+                  data-q-text={`${item.question} ${group.label} ${item.guideTitle}`}
+                >
+                  <a href={item.href}>
+                    <span class="q-item__q" aria-hidden="true">Q</span>
+                    <span class="q-item__text">{item.question}</span>
+                    <span class="q-item__from">{item.guideTitle}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
 
-    <section class="home-faq" aria-labelledby="faq-heading">
-      <header class="section-head">
-        <h2 id="faq-heading">别人常问</h2>
-        <p>点进去会落到对应文章的问答。</p>
-      </header>
-      <ul class="faq-jump">
-        {
-          faqs.map((item) => (
-            <li>
-              <a href={item.href}>
-                <span>{item.topic}</span>
-                {item.question}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </section>
+    <p class="q-empty" data-q-empty hidden>没有匹配的问题。换个词试试，或浏览全部文章。</p>
+
+    <p class="q-foot">
+      <span>想按主题系统学一遍？</span>
+      <a href={allHref}>浏览全部 {guides.length} 篇文章 →</a>
+    </p>
   </main>
 </Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-q-filter-form]');
+  const filter = document.querySelector<HTMLInputElement>('[data-q-filter]');
+  const groups = document.querySelectorAll<HTMLElement>('[data-q-group]');
+  const empty = document.querySelector<HTMLElement>('[data-q-empty]');
+
+  form?.addEventListener('submit', (e) => e.preventDefault());
+
+  function apply() {
+    const q = (filter?.value ?? '').trim().toLowerCase();
+    let visibleTotal = 0;
+    groups.forEach((group) => {
+      const items = group.querySelectorAll<HTMLElement>('[data-q-item]');
+      let groupVisible = 0;
+      items.forEach((item) => {
+        const text = item.getAttribute('data-q-text') ?? '';
+        const match = !q || text.toLowerCase().includes(q);
+        item.hidden = !match;
+        if (match) groupVisible++;
+      });
+      group.hidden = groupVisible === 0;
+      visibleTotal += groupVisible;
+    });
+    if (empty) empty.hidden = visibleTotal !== 0;
+  }
+
+  filter?.addEventListener('input', apply);
+</script>
