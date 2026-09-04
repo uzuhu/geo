@@ -1,0 +1,66 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getWikiEntries, groupByStep, entryHref } from '../../lib/wiki';
+
+const entries = await getWikiEntries();
+const groups = groupByStep(entries);
+---
+
+<Base
+  title="词条库"
+  description={`一问一词条：${entries.length} 个 GEO 高频问题，每个词条直接给出完整答案。按做 GEO 的流程分组，也可用搜索直达。`}
+>
+  <main id="main" class="page page--list">
+    <header class="list-hero">
+      <p class="kicker">词条库</p>
+      <h1>一问一词条</h1>
+      <p>
+        共 {entries.length} 个词条。点开任意问题，直接看到完整答案——不用翻文章。
+        顶栏搜索（快捷键 K）可全库检索。
+      </p>
+    </header>
+
+    {
+      groups.map(({ step, entries }) => (
+        <section class="q-group" aria-labelledby={`wg-${step.id}`}>
+          <header class="q-group__head">
+            <span class="q-group__badge">
+              流程第 {groups.findIndex((g) => g.step.id === step.id) + 1} 步
+            </span>
+            <h2 id={`wg-${step.id}`}>{step.title}：{step.goal}</h2>
+            <span class="q-group__count">{entries.length} 个词条</span>
+          </header>
+          <ul class="q-list">
+            {entries.map((entry) => (
+              <li class="q-item">
+                <a class="q-entry" href={entryHref(entry.id)}>
+                  <span class="q-entry__q" aria-hidden="true">Q</span>
+                  <span class="q-entry__body">
+                    <strong class="q-entry__title">{entry.data.title}</strong>
+                    <span class="q-entry__answer">{entry.data.answer}</span>
+                  </span>
+                  <svg
+                    class="q-entry__chevron"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M9 6l6 6-6 6"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </main>
+</Base>

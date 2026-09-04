@@ -1,21 +1,18 @@
 ---
 import Base from './Base.astro';
 import ArticleMeta from '../components/ArticleMeta.astro';
-import FaqSection from '../components/FaqSection.astro';
 import GeoSeo from '../components/GeoSeo.astro';
-import KeyTakeaways from '../components/KeyTakeaways.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import {
-  faqId,
-  getPublishedGuides,
-  guideHref,
-  neighbors,
-  relatedGuides,
-  topicHref,
+  entryHref,
+  entryStep,
+  getWikiEntries,
+  relatedEntries,
+  wikiIndexHref,
   withBase,
-  type GuideEntry,
-} from '../lib/guides';
-import { getTopic, type TopicId } from '../lib/topics';
+  type WikiEntry,
+} from '../lib/wiki';
+import { WORKFLOW } from '../lib/workflow';
 import { render } from 'astro:content';
 
 interface Heading {
@@ -25,42 +22,39 @@ interface Heading {
 }
 
 interface Props {
-  entry: GuideEntry;
+  entry: WikiEntry;
 }
 
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
 const data = entry.data;
-const topic = getTopic(data.topic as TopicId);
-const guides = await getPublishedGuides();
-const { prev, next } = neighbors(guides, entry.id);
-const related = relatedGuides(guides, entry);
+const step = entryStep(entry);
+const stepIndex = step ? WORKFLOW.findIndex((s) => s.id === step.id) + 1 : 0;
+const allEntries = await getWikiEntries();
+const related = relatedEntries(allEntries, data.related ?? []);
+const tools = data.tools ?? [];
 const site = Astro.site ?? new URL('https://uzuhu.github.io');
 const canonicalURL = new URL(Astro.url.pathname, site).href;
 const home = withBase('/');
-const faqItems = (data.faq ?? []).map((item) => ({
-  ...item,
-  id: faqId(item.question),
-}));
 
 const breadcrumbs = [
   { name: 'GEO 指南', url: new URL(home, site).href },
-  { name: topic.label, url: new URL(topicHref(topic.id), site).href },
+  { name: '词条库', url: new URL(wikiIndexHref(), site).href },
   { name: data.title, url: canonicalURL },
 ];
 ---
 
-<Base title={data.title} description={data.description}>
+<Base title={data.title} description={data.answer}>
   <Fragment slot="head">
     <GeoSeo
       title={data.title}
-      description={data.description}
+      description={data.answer}
       url={canonicalURL}
       publishDate={data.publishDate ? data.publishDate.toISOString() : undefined}
       updatedDate={data.updatedDate ? data.updatedDate.toISOString() : undefined}
       authorName={data.author}
       publisherName="uzuhu"
-      faq={data.faq}
+      faq={[{ question: data.title, answer: data.answer }]}
       breadcrumbs={breadcrumbs}
     />
   </Fragment>
@@ -71,16 +65,19 @@ const breadcrumbs = [
         <nav class="crumbs" aria-label="面包屑">
           <a href={home}>首页</a>
           <span aria-hidden="true">/</span>
-          <a href={topicHref(topic.id)}>{topic.label}</a>
+          <a href={wikiIndexHref()}>词条库</a>
         </nav>
 
         <header class="article-header">
-          <p class="kicker">{data.kicker ?? topic.label}</p>
+          <p class="kicker">{step ? `${step.title} · 流程第 ${stepIndex} 步` : '词条'}</p>
           <h1>{data.title}</h1>
           <ArticleMeta author={data.author} publishDate={data.publishDate} updatedDate={data.updatedDate} />
         </header>
 
-        {data.takeaways && data.takeaways.length > 0 && <KeyTakeaways items={data.takeaways} />}
+        <section class="entry-answer" aria-label="一句话答案">
+          <p class="entry-answer__label">一句话答案</p>
+          <p class="entry-answer__text">{data.answer}</p>
+        </section>
 
         <details class="toc-mobile">
           <summary>本篇目录</summary>
@@ -91,39 +88,34 @@ const breadcrumbs = [
           <Content />
         </article>
 
-        {faqItems.length > 0 && <FaqSection items={faqItems} />}
-
-        <nav class="pager" aria-label="相邻文章">
-          {
-            prev ? (
-              <a href={guideHref(prev.id)}>
-                <span>上一篇</span>
-                <strong>{prev.data.title}</strong>
-              </a>
-            ) : (
-              <span></span>
-            )
-          }
-          {
-            next ? (
-              <a href={guideHref(next.id)}>
-                <span>下一篇</span>
-                <strong>{next.data.title}</strong>
-              </a>
-            ) : (
-              <span></span>
-            )
-          }
-        </nav>
+        {
+          tools.length > 0 && (
+            <section class="flow-sec entry-tools" aria-label="顺手可用的工具">
+              <h2>顺手可用的工具</h2>
+              <ul class="tool-list">
+                {tools.map((tool) => (
+                  <li class="tool-card">
+                    <a class="tool-card__name" href={tool.url} target="_blank" rel="noopener noreferrer">
+                      {tool.name}
+                      {tool.badge && <span class="tool-card__badge">{tool.badge}</span>}
+                    </a>
+                    {tool.desc && <p class="tool-card__desc">{tool.desc}</p>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
 
         {
           related.length > 0 && (
-            <section class="related">
-              <h2>接下来可以读</h2>
+            <section class="related" aria-label="参见">
+              <h2>参见</h2>
               <ul>
                 {related.map((item) => (
                   <li>
-                    <a href={guideHref(item.id)}>{item.data.title}</a>
+                    <a href={item.href}>{item.title}</a>
+                    <p class="related__hint">{item.answer}</p>
                   </li>
                 ))}
               </ul>

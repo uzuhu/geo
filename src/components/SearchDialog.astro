@@ -1,6 +1,6 @@
 ---
 interface SearchItem {
-  type: 'guide' | 'faq';
+  type: 'entry';
   href: string;
   title: string;
   hint: string;
@@ -18,7 +18,7 @@ const payload = JSON.stringify(items).replace(/</g, '\\u003c');
 
 <dialog class="search-dialog" data-search-dialog>
   <form class="search-dialog__panel" method="dialog">
-    <label class="search-dialog__label" for="geo-search-input">搜索文章或问题</label>
+    <label class="search-dialog__label" for="geo-search-input">搜索问题</label>
     <input
       id="geo-search-input"
       class="search-dialog__input"
@@ -27,7 +27,7 @@ const payload = JSON.stringify(items).replace(/</g, '\\u003c');
       autocomplete="off"
       data-search-input
     />
-    <p class="search-dialog__hint">文章标题、要点和常见问题都会被搜到。Esc 关闭。</p>
+    <p class="search-dialog__hint">词条标题与一句话答案都会被搜到。Esc 关闭。</p>
     <div class="search-dialog__results" data-search-results></div>
     <button class="search-dialog__close" value="cancel" type="submit">关闭</button>
   </form>
@@ -37,7 +37,7 @@ const payload = JSON.stringify(items).replace(/</g, '\\u003c');
 
 <script>
   type SearchItem = {
-    type: 'guide' | 'faq';
+    type: 'entry';
     href: string;
     title: string;
     hint: string;
@@ -67,16 +67,16 @@ const payload = JSON.stringify(items).replace(/</g, '\\u003c');
     const q = query.trim().toLowerCase();
     const matched = q
       ? items.filter((item) => item.haystack.includes(q) || item.title.toLowerCase().includes(q)).slice(0, 12)
-      : items.filter((item) => item.type === 'guide').slice(0, 6);
+      : items.slice(0, 6);
 
     if (matched.length === 0) {
-      results.innerHTML = `<p class="search-empty">没有找到「${escapeHtml(query)}」。试试更短的词，或浏览全部文章。</p>`;
+      results.innerHTML = `<p class="search-empty">没有找到「${escapeHtml(query)}」。试试更短的词，或浏览词条库。</p>`;
       return;
     }
 
     results.innerHTML = matched
       .map((item) => {
-        const kind = item.type === 'faq' ? '问题' : '文章';
+        const kind = '词条';
         return `<a class="search-hit" href="${item.href}">
           <span class="search-hit__kind">${kind} · ${escapeHtml(item.topic)}</span>
           <span class="search-hit__title">${escapeHtml(item.title)}</span>

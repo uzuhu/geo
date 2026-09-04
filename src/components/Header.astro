@@ -1,12 +1,12 @@
 ---
-import { withBase } from '../lib/guides';
+import { withBase, wikiIndexHref } from '../lib/wiki';
 
 interface Props {
   homeHref: string;
 }
 
 const { homeHref } = Astro.props;
-const guidesHref = withBase('/guides/');
+const wikiHref = wikiIndexHref();
 ---
 
 <header class="site-header">
@@ -20,7 +20,7 @@ const guidesHref = withBase('/guides/');
     </a>
 
     <nav class="site-nav" aria-label="主导航">
-      <a href={guidesHref}>全部文章</a>
+      <a href={wikiHref}>词条库</a>
     </nav>
 
     <div class="site-header__actions">

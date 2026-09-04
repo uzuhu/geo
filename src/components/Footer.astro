@@ -1,8 +1,8 @@
 ---
-import { withBase } from '../lib/guides';
+import { withBase, wikiIndexHref } from '../lib/wiki';
 
 const home = withBase('/');
-const guides = withBase('/guides/');
+const wiki = wikiIndexHref();
 const github = 'https://github.com/uzuhu/geo';
 ---
 
@@ -10,10 +10,10 @@ const github = 'https://github.com/uzuhu/geo';
   <div class="site-footer__inner">
     <p>
       <a href={home}>GEO 指南</a>
-      按问题查找做法，而不是按目录翻文档。
+      一问一词条：点开问题，直接看到答案。
     </p>
     <nav aria-label="页脚">
-      <a href={guides}>全部文章</a>
+      <a href={wiki}>词条库</a>
       <a href={github}>GitHub</a>
     </nav>
   </div>

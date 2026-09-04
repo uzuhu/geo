@@ -1,0 +1,16 @@
+---
+import WikiLayout from '../../layouts/Wiki.astro';
+import { getWikiEntries } from '../../lib/wiki';
+
+export async function getStaticPaths() {
+  const entries = await getWikiEntries();
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+---
+
+<WikiLayout entry={entry} />

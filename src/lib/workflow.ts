@@ -1,6 +1,6 @@
 /**
  * 做 GEO 的流程模型：站点主入口按「流程步骤」组织。
- * 每一步回答三件事：用户会遇到什么问题（FAQ 内联展开）、我们的建议（文章）、可用工具（外链）。
+ * 每一步聚合属于该步骤的 wiki 词条（问题 → 一问一页的完整答案）与工具外链。
  */
 
 export interface WorkflowTool {
@@ -11,13 +11,10 @@ export interface WorkflowTool {
 }
 
 export interface WorkflowStep {
-  id: string;
+  id: 'understand' | 'assess' | 'foundation' | 'rewrite' | 'measure' | 'iterate';
   title: string;
   goal: string; // 这一步要达成什么（一句话）
   when: string; // 用户在这一步的处境
-  guideIds: string[]; // 建议阅读的文章（slug）
-  /** 可选：按问题关键词挑 FAQ 子串，避免同一条问题在多步重复出现 */
-  faqPicks?: string[];
   tools: WorkflowTool[];
 }
 
@@ -27,7 +24,6 @@ export const WORKFLOW: WorkflowStep[] = [
     title: '建立认知',
     goal: '搞清 GEO 是什么、和 SEO 什么关系、值不值得投入。',
     when: '刚听说 GEO，不确定它是不是又一个营销概念。',
-    guideIds: ['what-is-geo', 'geo-vs-seo'],
     tools: [],
   },
   {
@@ -35,8 +31,6 @@ export const WORKFLOW: WorkflowStep[] = [
     title: '摸清现状',
     goal: '先知道你的内容现在有没有被 AI 引用、被怎么说。',
     when: '想动手，但不知道自己起点在哪。',
-    guideIds: ['measure-geo'],
-    faqPicks: ['没有预算'],
     tools: [
       {
         name: 'ChatGPT / Perplexity 直接问',
@@ -63,7 +57,6 @@ export const WORKFLOW: WorkflowStep[] = [
     title: '配好地基',
     goal: '让 AI 爬虫能来、能抓、能看懂你的页面结构。',
     when: '内容不错，但 AI 可能根本读不到。',
-    guideIds: ['ai-crawlers'],
     tools: [
       {
         name: 'Google Search Console',
@@ -96,8 +89,6 @@ export const WORKFLOW: WorkflowStep[] = [
     title: '改造内容',
     goal: '把页面改成 AI 愿意直接引用的「答案」，而不是需要再总结的长文。',
     when: '地基没问题，但 AI 就是不引用你。',
-    guideIds: ['geo-strategies', 'geo-playbook'],
-    faqPicks: ['哪一项', '关键词堆砌', '信息增益', '单篇内容', 'llms.txt'],
     tools: [],
   },
   {
@@ -105,8 +96,6 @@ export const WORKFLOW: WorkflowStep[] = [
     title: '衡量效果',
     goal: '用数据回答「有没有效」，而不是凭感觉。',
     when: '改了一阵子，不知道该向老板/自己证明什么。',
-    guideIds: ['measure-geo'],
-    faqPicks: ['Search Console', '最重要的指标'],
     tools: [
       {
         name: 'Semrush AI Visibility Toolkit',
@@ -127,8 +116,6 @@ export const WORKFLOW: WorkflowStep[] = [
     title: '持续迭代',
     goal: '把 GEO 变成每周的常规动作，而不是一次性项目。',
     when: '有了初步效果，怕做完就停滞。',
-    guideIds: ['geo-playbook'],
-    faqPicks: ['多久', '优先级'],
     tools: [],
   },
 ];
@@ -136,5 +123,5 @@ export const WORKFLOW: WorkflowStep[] = [
 const stepMap = new Map(WORKFLOW.map((s) => [s.id, s]));
 
 export function getStep(id: string): WorkflowStep | undefined {
-  return stepMap.get(id);
+  return stepMap.get(id as WorkflowStep['id']);
 }

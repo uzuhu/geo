@@ -1,42 +1,42 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-const TOPIC_IDS = ['intro', 'compare', 'strategy', 'measure', 'technical'] as const;
+const STEP_IDS = ['understand', 'assess', 'foundation', 'rewrite', 'measure', 'iterate'] as const;
 
 /**
- * 新增文章：在 src/content/guides/ 下新建 Markdown 文件即可。
- * 文件名即网址：foo.md → /guides/foo/
+ * 纯 Wiki 结构：一问一词条。
  *
- * 必填：title、description、topic
- * 常用：kicker、order、takeaways、faq、publishDate、author
- * topic 取值：intro | compare | strategy | measure | technical
- * kind 取值：concept | recipe | template | tool | example | qa（内容类型，用于按"应用"组织）
- * 若要新增主题，先改 src/lib/topics.ts
+ * 新增词条：在 src/content/wiki/ 下新建 Markdown 文件即可。
+ * 文件名即网址：foo.md → /wiki/foo/
+ *
+ * 必填：title（问题本身）、answer（一句话结论，页面 TL;DR 与摘要）、step（所属流程步骤）
+ * 常用：order、related（参见词条 slug 列表）、tools（工具外链）、publishDate、author
+ * step 取值：understand | assess | foundation | rewrite | measure | iterate
+ * 步骤定义见 src/lib/workflow.ts
  */
-const guides = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/guides' }),
+const wiki = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/wiki' }),
   schema: z.object({
     title: z.string(),
-    description: z.string(),
-    topic: z.enum(TOPIC_IDS),
-    kind: z.enum(['concept', 'recipe', 'template', 'tool', 'example', 'qa']).optional(),
-    kicker: z.string().optional(),
+    answer: z.string(),
+    step: z.enum(STEP_IDS),
     order: z.number().optional(),
-    featured: z.boolean().optional(),
     draft: z.boolean().optional().default(false),
     publishDate: z.coerce.date().optional(),
     updatedDate: z.coerce.date().optional(),
     author: z.string().optional(),
-    takeaways: z.array(z.string()).optional(),
-    faq: z
+    related: z.array(z.string()).optional(),
+    tools: z
       .array(
         z.object({
-          question: z.string(),
-          answer: z.string(),
+          name: z.string(),
+          desc: z.string().optional(),
+          url: z.string(),
+          badge: z.string().optional(),
         })
       )
       .optional(),
   }),
 });
 
-export const collections = { guides };
+export const collections = { wiki };

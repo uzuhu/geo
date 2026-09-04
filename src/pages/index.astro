@@ -1,40 +1,30 @@
 ---
 import Base from '../layouts/Base.astro';
-import {
-  getPublishedGuides,
-  faqItemsForGuides,
-  guideHref,
-  withBase,
-} from '../lib/guides';
-import { WORKFLOW } from '../lib/workflow';
+import { getWikiEntries, groupByStep, entryHref, wikiIndexHref } from '../lib/wiki';
 
-const guides = await getPublishedGuides();
-const steps = WORKFLOW.map((step) => {
-  const faqs = faqItemsForGuides(guides, step.guideIds, step.faqPicks);
-  const readings = step.guideIds
-    .map((id) => guides.find((g) => g.id === id))
-    .filter((g): g is NonNullable<typeof g> => Boolean(g));
-  return { ...step, faqs, readings };
-});
-const allHref = withBase('/guides/');
+const entries = await getWikiEntries();
+const groups = groupByStep(entries);
 ---
 
 <Base
   title="GEO 指南"
-  description="做 GEO，就这 6 步：建立认知、摸清现状、配好地基、改造内容、衡量效果、持续迭代。每一步列出你会遇到的问题，点开即看答案，并附建议做法与可用工具。"
+  description={`做 GEO，就这 ${groups.length} 步：每一步列出你会遇到的问题，一问一词条，点开即看完整答案，并附可用工具。`}
 >
   <main id="main" class="page page--home">
     <section class="hero">
       <p class="kicker">生成式引擎优化 · GEO</p>
-      <h1>做 GEO，就这 {WORKFLOW.length} 步</h1>
+      <h1>做 GEO，就这 {groups.length} 步</h1>
       <p class="hero__lead">
-        每一步：你会遇到什么问题、怎么解决、用什么工具。点开即看，不用翻文章。
+        每一步：你会遇到什么问题、怎么解决、用什么工具。一问一词条，点开即看完整答案。
+      </p>
+      <p class="hero__sub">
+        <a href={wikiIndexHref()}>直接浏览全部 {entries.length} 个词条 →</a>
       </p>
     </section>
 
     <ol class="flow">
       {
-        steps.map((step, i) => (
+        groups.map(({ step, entries }, i) => (
           <li class="flow-step">
             <details class="flow-step__panel">
               <summary class="flow-step__head">
@@ -46,7 +36,7 @@ const allHref = withBase('/guides/');
                   <span class="flow-step__goal">{step.goal}</span>
                 </span>
                 <span class="flow-step__meta">
-                  {step.faqs.length > 0 && <span>{step.faqs.length} 个问题</span>}
+                  <span>{entries.length} 个词条</span>
                   {step.tools.length > 0 && <span>{step.tools.length} 个工具</span>}
                   <svg
                     class="flow-step__chevron"
@@ -70,45 +60,38 @@ const allHref = withBase('/guides/');
               <div class="flow-step__body">
                 <p class="flow-step__when">你在这一步：{step.when}</p>
 
-                {step.faqs.length > 0 && (
-                  <section class="flow-sec" aria-label="这一步的问题与解答">
-                    <h2>你会遇到的问题</h2>
-                    <ul class="q-list">
-                      {step.faqs.map((item) => (
-                        <li class="q-item">
-                          <details class="q-a">
-                            <summary class="q-a__q">
-                              <span class="q-a__qmark" aria-hidden="true">Q</span>
-                              <span class="q-a__text">{item.question}</span>
-                              <svg
-                                class="q-a__chevron"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                aria-hidden="true"
-                              >
-                                <path
-                                  d="M9 6l6 6-6 6"
-                                  stroke="currentColor"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </summary>
-                            <div class="q-a__body">
-                              <p class="q-a__answer">{item.answer}</p>
-                              <a class="q-a__more" href={item.href}>
-                                在《{item.guideTitle}》查看完整解答 →
-                              </a>
-                            </div>
-                          </details>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
+                <section class="flow-sec" aria-label="这一步的问题与解答">
+                  <h2>你会遇到的问题（点开看完整答案）</h2>
+                  <ul class="q-list">
+                    {entries.map((entry) => (
+                      <li class="q-item">
+                        <a class="q-entry" href={entryHref(entry.id)}>
+                          <span class="q-entry__q" aria-hidden="true">Q</span>
+                          <span class="q-entry__body">
+                            <strong class="q-entry__title">{entry.data.title}</strong>
+                            <span class="q-entry__answer">{entry.data.answer}</span>
+                          </span>
+                          <svg
+                            class="q-entry__chevron"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M9 6l6 6-6 6"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
 
                 {step.tools.length > 0 && (
                   <section class="flow-sec" aria-label="这一步可用的工具">
@@ -116,7 +99,12 @@ const allHref = withBase('/guides/');
                     <ul class="tool-list">
                       {step.tools.map((tool) => (
                         <li class="tool-card">
-                          <a class="tool-card__name" href={tool.url} target="_blank" rel="noopener noreferrer">
+                          <a
+                            class="tool-card__name"
+                            href={tool.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             {tool.name}
                             {tool.badge && <span class="tool-card__badge">{tool.badge}</span>}
                           </a>
@@ -124,19 +112,6 @@ const allHref = withBase('/guides/');
                         </li>
                       ))}
                     </ul>
-                  </section>
-                )}
-
-                {step.readings.length > 0 && (
-                  <section class="flow-sec" aria-label="建议阅读">
-                    <h2>建议阅读</h2>
-                    <p class="flow-guides">
-                      {step.readings.map((g) => (
-                        <a class="guide-chip" href={guideHref(g.id)}>
-                          {g.data.title}
-                        </a>
-                      ))}
-                    </p>
                   </section>
                 )}
               </div>
@@ -147,8 +122,8 @@ const allHref = withBase('/guides/');
     </ol>
 
     <p class="q-foot">
-      <span>想按主题系统学一遍？</span>
-      <a href={allHref}>浏览全部 {guides.length} 篇文章 →</a>
+      <span>想一口气看全部？</span>
+      <a href={wikiIndexHref()}>浏览词条库（{entries.length} 个词条）→</a>
     </p>
   </main>
 </Base>
