@@ -2,6 +2,7 @@
 title: "GEO 优化策略：9 项被验证的内容战术"
 kicker: "内容战术"
 topic: strategy
+kind: recipe
 order: 2
 description: "基于普林斯顿 KDD 2024 论文的 GEO-bench 实验，拆解 9 项内容策略的真实效果（引用 +41%、数据 +31%、流畅度 +28%……），以及可立即落地的 GEO 实战清单与多平台差异。"
 publishDate: 2026-09-03

@@ -2,6 +2,7 @@
 title: "AI 爬虫与 robots.txt 配置"
 kicker: "技术配置"
 topic: technical
+kind: template
 order: 5
 description: "生成式引擎要引用你的内容，第一步是能抓到它。本文列出主流 AI 爬虫（GPTBot、ClaudeBot、PerplexityBot、Google-Extended 等），给出对 AI 友好的 robots.txt 范例，以及验证爬虫可访问性的方法。"
 publishDate: 2026-09-03

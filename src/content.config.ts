@@ -10,6 +10,7 @@ const TOPIC_IDS = ['intro', 'compare', 'strategy', 'measure', 'technical'] as co
  * 必填：title、description、topic
  * 常用：kicker、order、takeaways、faq、publishDate、author
  * topic 取值：intro | compare | strategy | measure | technical
+ * kind 取值：concept | recipe | template | tool | example | qa（内容类型，用于按"应用"组织）
  * 若要新增主题，先改 src/lib/topics.ts
  */
 const guides = defineCollection({
@@ -18,6 +19,7 @@ const guides = defineCollection({
     title: z.string(),
     description: z.string(),
     topic: z.enum(TOPIC_IDS),
+    kind: z.enum(['concept', 'recipe', 'template', 'tool', 'example', 'qa']).optional(),
     kicker: z.string().optional(),
     order: z.number().optional(),
     featured: z.boolean().optional(),

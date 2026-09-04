@@ -2,6 +2,7 @@
 title: "GEO 与 SEO：核心差异与互补关系"
 kicker: "概念对照"
 topic: compare
+kind: concept
 order: 3
 description: "用一张对比表讲清 GEO 与 SEO 在输出形态、查询方式、优化目标与成功指标上的差异，并解释为什么「SEO 是 GEO 的基础」——生成式引擎的两阶段架构决定了二者必须并行。"
 publishDate: 2026-09-03

@@ -1,0 +1,48 @@
+---
+/**
+ * 渲染问答分组（问题 + 内联可展开答案）。首页与场景页复用。
+ * data-q-group / data-q-item / data-q-text 供首页的即时筛选脚本使用。
+ */
+import type { QuestionGroup } from '../lib/guides';
+
+interface Props {
+  groups: QuestionGroup[];
+}
+
+const { groups } = Astro.props;
+---
+
+{
+  groups.map((group) => (
+    <section class="q-group" data-q-group aria-labelledby={`qg-${group.id}`}>
+      <header class="q-group__head">
+        <span class="q-group__badge">{group.label}</span>
+        <h2 id={`qg-${group.id}`}>{group.question}</h2>
+        <span class="q-group__count">{group.items.length} 个问题</span>
+      </header>
+      <ul class="q-list">
+        {group.items.map((item) => (
+          <li
+            class="q-item"
+            data-q-item
+            data-q-text={`${item.question} ${item.answer} ${group.label} ${item.guideTitle}`}
+          >
+            <details class="q-a">
+              <summary class="q-a__q">
+                <span class="q-a__qmark" aria-hidden="true">Q</span>
+                <span class="q-a__text">{item.question}</span>
+                <svg class="q-a__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </summary>
+              <div class="q-a__body">
+                <p class="q-a__answer">{item.answer}</p>
+                <a class="q-a__more" href={item.href}>在《{item.guideTitle}》查看完整解答 →</a>
+              </div>
+            </details>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))
+}

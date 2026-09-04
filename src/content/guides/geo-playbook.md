@@ -2,6 +2,7 @@
 title: "GEO 实战教程：90 天落地路线图"
 description: "从审计 AI 可见度、打好技术地基（llms.txt / Schema / 静态渲染），到逐页改造、实体权威建设、多平台分发的端到端 GEO 落地方法。附可直接照抄的页面检查清单与常见误区。"
 topic: strategy
+kind: recipe
 order: 6
 publishDate: 2026-09-04
 updatedDate: 2026-09-04

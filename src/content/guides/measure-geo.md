@@ -2,6 +2,7 @@
 title: "如何度量 GEO 效果"
 kicker: "效果度量"
 topic: measure
+kind: recipe
 order: 4
 description: "GEO 没有统一的 Google Search Console，但可度量。本文给出三层度量栈（GSC AI Overview、AI 品牌监测工具、手动 Prompt Panel）、核心 KPI、代理指标，以及一套可立即上手的 30–50 条 Prompt 监测法。"
 publishDate: 2026-09-03

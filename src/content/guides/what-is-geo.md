@@ -2,6 +2,7 @@
 title: "GEO 优化入门指南"
 kicker: "入门指南"
 topic: intro
+kind: concept
 order: 1
 featured: true
 description: "全面解析生成式引擎优化（GEO）的起源、核心概念与落地策略：从普林斯顿研究的 9 项内容策略，到结构化数据与语义化写作，让内容被 AI 准确理解、引用与归因。"

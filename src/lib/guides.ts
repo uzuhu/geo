@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { getTopic, type TopicId } from './topics';
+import { TOPICS, getTopic, type TopicId } from './topics';
 
 export type GuideEntry = CollectionEntry<'guides'>;
 
@@ -51,6 +51,42 @@ export interface SearchItem {
   hint: string;
   topic: string;
   haystack: string;
+}
+
+export interface QuestionGroup {
+  id: string;
+  label: string;
+  question: string;
+  items: {
+    question: string;
+    answer: string;
+    href: string;
+    guideTitle: string;
+  }[];
+}
+
+/**
+ * 把指南里的 FAQ 按主题聚成「问答分组」，供首页与场景页复用。
+ * 传 topicIds 则只保留这些主题的分组（场景页用）。
+ */
+export function buildQuestionGroups(guides: GuideEntry[], topicIds?: TopicId[]): QuestionGroup[] {
+  const topics = topicIds ? TOPICS.filter((t) => topicIds.includes(t.id)) : TOPICS;
+  return topics
+    .map((topic) => {
+      const items = guides
+        .filter((g) => g.data.topic === topic.id)
+        .sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999))
+        .flatMap((g) =>
+          (g.data.faq ?? []).map((faq) => ({
+            question: faq.question,
+            answer: faq.answer,
+            href: `${guideHref(g.id)}#${faqId(faq.question)}`,
+            guideTitle: g.data.title,
+          }))
+        );
+      return { id: topic.id, label: topic.label, question: topic.question, items };
+    })
+    .filter((g) => g.items.length > 0);
 }
 
 export function buildSearchIndex(guides: GuideEntry[]): SearchItem[] {
