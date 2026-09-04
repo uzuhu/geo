@@ -12,6 +12,7 @@ const questionGroups = TOPICS.map((topic) => {
     .flatMap((g) =>
       (g.data.faq ?? []).map((faq) => ({
         question: faq.question,
+        answer: faq.answer,
         href: `${guideHref(g.id)}#${faqId(faq.question)}`,
         guideTitle: g.data.title,
       }))
@@ -25,14 +26,14 @@ const allHref = withBase('/guides/');
 
 <Base
   title="GEO 指南"
-  description="按真实问题找 GEO 答案：入门、对照 SEO、内容策略、效果度量与技术配置。点一下直达解答。"
+  description="按真实问题找 GEO 答案：入门、对照 SEO、内容策略、效果度量与技术配置。点一下在首页直接看解答。"
 >
   <main id="main" class="page page--home">
     <section class="hero">
       <p class="kicker">生成式引擎优化 · GEO</p>
       <h1>你的问题，这里都有答案</h1>
       <p class="hero__lead">
-        按真实问题分类，点一下直达解答。一时找不到，就直接搜。
+        点一下问题，答案直接展开在当下。一时找不到，就直接搜。
       </p>
 
       <form class="q-filter" data-q-filter-form>
@@ -51,7 +52,7 @@ const allHref = withBase('/guides/');
       </form>
     </section>
 
-    <p class="q-count">共 {totalQuestions} 个高频问题，按主题归好类：</p>
+    <p class="q-count">共 {totalQuestions} 个高频问题，按主题归好类，点开即看解答：</p>
 
     <div class="q-index">
       {
@@ -67,13 +68,21 @@ const allHref = withBase('/guides/');
                 <li
                   class="q-item"
                   data-q-item
-                  data-q-text={`${item.question} ${group.label} ${item.guideTitle}`}
+                  data-q-text={`${item.question} ${item.answer} ${group.label} ${item.guideTitle}`}
                 >
-                  <a href={item.href}>
-                    <span class="q-item__q" aria-hidden="true">Q</span>
-                    <span class="q-item__text">{item.question}</span>
-                    <span class="q-item__from">{item.guideTitle}</span>
-                  </a>
+                  <details class="q-a">
+                    <summary class="q-a__q">
+                      <span class="q-a__qmark" aria-hidden="true">Q</span>
+                      <span class="q-a__text">{item.question}</span>
+                      <svg class="q-a__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      </svg>
+                    </summary>
+                    <div class="q-a__body">
+                      <p class="q-a__answer">{item.answer}</p>
+                      <a class="q-a__more" href={item.href}>在《{item.guideTitle}》查看完整解答 →</a>
+                    </div>
+                  </details>
                 </li>
               ))}
             </ul>

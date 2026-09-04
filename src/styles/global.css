@@ -517,36 +517,70 @@ code {
   gap: 0;
 }
 
-.q-item a {
+.q-item {
+  /* li wrapper, no own styling */
+}
+
+.q-a {
+  border-bottom: 1px solid var(--line);
+}
+
+.q-a__q {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: baseline;
   gap: 0.6rem;
-  padding: 0.72rem 0.35rem;
-  border-bottom: 1px solid var(--line);
+  padding: 0.78rem 0.35rem;
+  cursor: pointer;
+  list-style: none;
   color: var(--ink);
   font-size: 1.02rem;
   font-weight: 600;
   line-height: 1.5;
 }
 
-.q-item a:hover {
-  color: var(--accent);
-  text-decoration: none;
+.q-a__q::-webkit-details-marker {
+  display: none;
 }
 
-.q-item__q {
+.q-a__q:hover {
+  color: var(--accent);
+}
+
+.q-a__q:hover .q-a__chevron {
+  color: var(--accent);
+}
+
+.q-a__qmark {
   color: var(--accent);
   font-family: var(--font-serif);
   font-weight: 700;
   font-size: 0.95rem;
 }
 
-.q-item__from {
+.q-a__chevron {
   color: var(--faint);
-  font-size: 12px;
-  font-weight: 400;
-  white-space: nowrap;
+  transition: transform 0.15s ease;
+}
+
+.q-a[open] .q-a__chevron {
+  transform: rotate(90deg);
+}
+
+.q-a__body {
+  padding: 0 0.35rem 1rem 2.05rem;
+}
+
+.q-a__answer {
+  margin: 0 0 0.7rem;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.q-a__more {
+  font-weight: 700;
+  font-size: 0.9rem;
 }
 
 .q-empty {
@@ -812,7 +846,7 @@ code {
   cursor: pointer;
   list-style: none;
   padding: 0.85rem 0;
-  font-size: 16px;
+  font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.5;
 }
@@ -825,12 +859,17 @@ code {
   font-weight: 400;
 }
 .geo-faq__item[open] summary::after { content: "–"; }
+.geo-faq__item[open] {
+  background: var(--accent-faint);
+  border-radius: 8px;
+  padding: 0 0.85rem;
+}
 .geo-faq__item p {
   margin: 0;
   padding: 0 0 0.95rem;
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.75;
+  color: var(--ink);
+  font-size: 16.5px;
+  line-height: 1.8;
 }
 
 /* Prose */
